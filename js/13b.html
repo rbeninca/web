@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador de Números</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px;
+        }
+
+        label,
+        input,
+        button {
+            margin: 10px 0;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+
+            display: flex;
+            flex-direction: column;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            /* Inicialmente invisível */
+            transition: opacity 1s ease;
+            /* Transição suave para opacidade */
+        }
+
+        li.visivel {
+            opacity: 1;
+            /* Torna visível ao aplicar a classe */
+        }
+
+        button.excluir {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button.excluir:hover {
+            background-color: #d32f2f;
+        }
+
+        #lista-resultados {
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 20px;
+        }
+
+        #lista-resultados {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, auto));
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sorteador de Números</h1>
+    <form id="formulario-intervalo">
+        <label for="valor-minimo">Valor mínimo:</label>
+        <input type="number" id="valor-minimo" required>
+        <label for="valor-maximo">Valor máximo:</label>
+        <input type="number" id="valor-maximo" required>
+        <button type="button" id="botao-sortear">Sortear</button>
+        <button type="button" id="botao-limpar-sorteios">Limpar Sorteios</button>
+    </form>
+
+    <h2>Resultados</h2>
+    <ul id="lista-resultados"></ul>
+
+    <script>
+        // Classe que representa um Sorteio
+        class Sorteio {
+            constructor(valorMinimo, valorMaximo) {
+                this.valorMinimo = valorMinimo;
+                this.valorMaximo = valorMaximo;
+                this.valorSorteado = this.sortearNumero();
+            }
+
+            sortearNumero() {
+                return Math.floor(Math.random() * (this.valorMaximo - this.valorMinimo + 1)) + this.valorMinimo;
+            }
+        }
+
+        // Controlador que gerencia os sorteios
+        class SorteioController {
+            constructor() {
+                this.resultados = [];
+            }
+
+            criarSorteio(valorMinimo, valorMaximo) {
+                const novoSorteio = new Sorteio(valorMinimo, valorMaximo);
+                this.resultados.push(novoSorteio);
+                return { sorteio: novoSorteio, id: this.resultados.length - 1 };
+            }
+
+            removerSorteio(id) {
+                this.resultados.splice(id, 1);
+            }
+
+            limparSorteios() {
+                this.resultados = [];
+            }
+
+            getSorteios() {
+                return this.resultados;
+            }
+        }
+
+        // Classe que gerencia a interface
+        class SorteioView {
+            constructor() {
+                this.inputMinimo = document.getElementById("valor-minimo");
+                this.inputMaximo = document.getElementById("valor-maximo");
+                this.listaResultados = document.getElementById("lista-resultados");
+                this.botaoSortear = document.getElementById("botao-sortear");
+                this.botaoLimpar = document.getElementById("botao-limpar-sorteios");
+                this.sorteioController = new SorteioController();
+
+                // Adiciona eventos aos botões
+                this.botaoSortear.addEventListener("click", () => this.novoSorteio());
+                this.botaoLimpar.addEventListener("click", () => this.limparSorteios());
+            }
+
+            novoSorteio() {
+                const valorMinimo = parseInt(this.inputMinimo.value);
+                const valorMaximo = parseInt(this.inputMaximo.value);
+
+                if (isNaN(valorMinimo) || isNaN(valorMaximo) || valorMinimo > valorMaximo) {
+                    alert("Por favor, insira valores válidos. O valor mínimo deve ser menor ou igual ao máximo.");
+                    return;
+                }
+
+                const { sorteio, id } = this.sorteioController.criarSorteio(valorMinimo, valorMaximo);
+                this.adicionaNovoSorteioLista(sorteio, id);
+            }
+
+            adicionaNovoSorteioLista(novoSorteio, id) {
+                const item = document.createElement("li");
+                item.setAttribute("data-id", id);
+                item.innerHTML = `
+                    Número ${novoSorteio.valorSorteado} <p> intervalo [${novoSorteio.valorMinimo}, ${novoSorteio.valorMaximo}]</p>
+                    <button class="excluir">Excluir</button>
+                `;
+                this.listaResultados.appendChild(item);
+
+                // Adiciona evento ao botão de exclusão
+                item.querySelector(".excluir").addEventListener("click", () => {
+                    this.removerSorteio(item);
+                });
+                // Faz o elemento aparecer gradualmente
+                setTimeout(() => {
+                    item.classList.add("visivel");
+                }, 10); // Pequeno atraso para garantir a aplicação inicial da transição
+            }
+        
+
+        removerSorteio(item) {
+            const id = parseInt(item.getAttribute("data-id"));
+            this.sorteioController.removerSorteio(id);
+            this.listaResultados.removeChild(item);
+
+            // Atualiza os IDs dos itens restantes
+            this.atualizarIDs();
+        }
+
+        atualizarIDs() {
+            const itens = this.listaResultados.children;
+            Array.from(itens).forEach((item, index) => {
+                item.setAttribute("data-id", index);
+            });
+        }
+
+        limparSorteios() {
+            this.sorteioController.limparSorteios();
+            this.listaResultados.innerHTML = ""; // Remove todos os itens da lista
+        }
+        testeInsercao() {
+            this.limparSorteios();
+            for (let i = 0; i < 100; i++) {
+                const valorMinimo = Math.floor(Math.random() * 50) + 1; // Min 1-50
+                const valorMaximo = Math.floor(Math.random() * 50) + 51; // Max 51-100
+                const { sorteio, id } = this.sorteioController.criarSorteio(valorMinimo, valorMaximo);
+                this.adicionaNovoSorteioLista(sorteio, id);
+            }
+        }
+
+        }
+
+        // Inicialização da aplicação
+        document.addEventListener("DOMContentLoaded", () => {
+            App = new SorteioView();
+            App.testeInsercao();
+            
+
+        });
+
+
+    </script>
+</body>
+
+</html>
