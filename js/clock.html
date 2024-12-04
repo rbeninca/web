@@ -29,7 +29,6 @@
     <p id="relogio">00:00:00</p>
     <script>
         let prelogio = document.getElementById('relogio');
-     
         function atualizaRelogio() {
             const agora = new Date();
             const horas = agora.getHours().toString().padStart(2, '0');
@@ -39,7 +38,6 @@
             prelogio.innerHTML= `${horas}:${minutos}:${segundos}:${milissegundos}`;
             console.log(prelogio);
         }
-
         setInterval(atualizaRelogio, 1);
 </script>
 </body>

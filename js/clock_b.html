@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relógio</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin: 20px;
+            min-height: 80lvh;
+        }
+
+        #relogio {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    
+    <h2>Relógio</h2>
+    <p id="relogio">00:00:00</p>
+    <script>
+        let prelogio = document.getElementById('relogio');
+
+        //classe relogio com a função atualizaRelogio
+        let appRelogio={
+            //propriedade atualizaRelogio que é uma função que atualiza o relogio
+            atualizaRelogio: function(){
+                const agora = new Date();
+                const horas = agora.getHours().toString().padStart(2, '0');
+                const minutos = agora.getMinutes().toString().padStart(2, '0');
+                const segundos = agora.getSeconds().toString().padStart(2, '0');
+                const milissegundos = agora.getMilliseconds().toString().padStart(3, '0');
+                prelogio.innerHTML= `${horas}:${minutos}:${segundos}:${milissegundos}`;
+                
+            },
+
+            //propriedade setInterval que chama a função atualizaRelogio a cada 1 milissegundo
+            setInterval: function(){
+                this.inervalo=setInterval(this.atualizaRelogio, 1);
+            },
+            //propriedade clearInterval que para o setInterval
+            clearInterval: function(){
+                clearInterval(this.inervalo);
+            },
+
+            
+            //função salvaTime inervalo que pega o horario do localStorage
+            salvaTime: function(){
+                localStorage.setItem(localStorage.length, prelogio.innerHTML);
+            },
+            salvaTimeEexibe: function(){
+                localStorage.setItem(localStorage.length, prelogio.innerHTML);
+                appRelogio.mostraTime();
+            },
+
+            //função pegaTime que pega o horario do localStorage
+            pegaTime: function(){
+                resultArray=[];
+                for(let i=0; i<localStorage.length; i++){
+                    console.log(localStorage.getItem(i));
+                    resultArray.push(localStorage.getItem(i));
+                }
+                return resultArray;
+            },
+
+            //função que mostra o horario do localStorage
+            mostraTime: function(){
+                //chma a função pegaTime e guarda em times
+                let times=appRelogio.pegaTime();
+                // apaga uls anteriores
+                let uls=document.querySelectorAll('ul');
+                for(let i=0; i<uls.length; i++){
+                    uls[i].remove();
+                }
+                //cria uma ul e li para cada horario
+                let ul=document.createElement('ul');
+                // define que nova ul é flex com elementos em row
+                ul.style.display='flex';
+                ul.style.flexDirection='row';
+                ul.style.flexWrap='wrap';
+                 
+                
+                for(let i=0; i<times.length; i++){
+                    let li=document.createElement('li');
+                    li.innerHTML=times[i];
+                    li.style.border='1px solid #ccc';
+                    li.style.borderRadius='5px';
+                    li.style.padding='10px';
+                    li.style.listStyle='none';
+                    ul.appendChild(li);
+                }
+                document.body.appendChild(ul);
+                
+            },
+            //limpa o localStorage
+            limpaTime: function(){
+                localStorage.clear();
+                appRelogio.mostraTime();
+            }
+
+
+        }
+        appRelogio.setInterval();
+        appRelogio.mostraTime();
+        
+        //cria um botão salvar que chama a função salvaTimeEexibe
+        let buttonSalvar=document.createElement('button');
+        buttonSalvar.innerHTML='Salvar';
+        buttonSalvar.onclick=appRelogio.salvaTimeEexibe;
+
+        
+        document.body.appendChild(buttonSalvar);
+        document.addEventListener('keydown', function(event){
+                appRelogio.salvaTimeEexibe();
+            
+        });
+        
+
+        let buttonLimpar=document.createElement('button');
+        buttonLimpar.innerHTML='Limpar';
+        buttonLimpar.onclick=appRelogio.limpaTime;
+        document.body.appendChild(buttonLimpar);
+        
+
+        </script>
+</body>
+</html>
