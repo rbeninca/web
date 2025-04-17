@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Cotação Bitcoin</h1>
+    <p id="cotacao"></p>
+    <button>Buscar Cotação</button>
+    <script>
+        let url="https://economia.awesomeapi.com.br/json/last/BTC-BRL"
+        document.querySelector("button").addEventListener("click",getValueBitcoin);
+        let cotacao=document.querySelector("#cotacao");
+        function getValueBitcoin(){
+            
+            fetch(url)
+            .then( (r)=>{
+                        console.log(r)     
+                        return r.json()
+                        }  )
+            .then( (respota)=>{
+                        console.log(respota);
+                        cotacao.innerHTML=new Intl.NumberFormat( "pt-BR" ,
+                            {style:"currency",
+                            currency:"BRL"}
+                        ).format(respota.BTCBRL.high);
+            })
+
+        }
+        
+
+    </script>
+</body>
+</html>
