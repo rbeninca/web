@@ -1,19 +1,25 @@
 <html>
     <head>
         <title>Meu primeiro HTML</title>
+        <style>
+            img{width: 300px;
+                border-radius: 50%;
+            }
+            p{color: blue;}
+            h1{color: red;}
+            ul{background-color: lightgray;
+                 padding: 20px;}
+            
+            table,td{border: 1px solid black;
+                     border-collapse: collapse;
+                     }
+        </style>
     </head>
     <body>
         <!--Comentário-->
-        <h1> Título de nível 1</h1>
-        <h2> Título de nível 2</h2>
-        <h3> Título de nível 3</h3>
-        <h4> Título de nível 4</h4>
-        <h5> Título de nível 5</h5>
-        <h6> Título de nível 6</h6>
-        <p> Programação de Internet</p>
-        <span> Somente Texto</span><span> outro texto na mesma linha</span>
-        <hr>
-        <p>Lorem <em>ipsum</em> dolor <strong>sit amet</strong> consectetur adipisicing elit. Sapiente veritatis recusandae adipisci tempora! Doloremque mollitia impedit dicta maxime. Mollitia corporis excepturi quas laborum, voluptas illum dolorum aliquam hic unde porro?</p>
+       
+        <hr> 
+       
         <ul>
             <li>git init - cria um repositório em um diretório</li>
             <li>git add - adiciona modificações d workcopy/ worktree ai stage</li>
@@ -26,7 +32,90 @@
             <li> git push  remote  branch</li>
             <li> git config user.name="Nome"</li>
             <li> git config user.email="Email"</li>
-
         </ul>
+        <hr> 
+        <h1> Título de nível 1</h1>
+        <h2> Título de nível 2</h2>
+        <h3> Título de nível 3</h3>
+        <h4> Título de nível 4</h4>
+        <h5> Título de nível 5</h5>
+        <h6> Título de nível 6</h6>
+        <p> Programação de Internet</p>
+
+        <p>Lorem <em>ipsum</em> dolor <strong>sit amet</strong> consectetur adipisicing elit. Sapiente veritatis recusandae adipisci tempora! Doloremque mollitia impedit dicta maxime. Mollitia corporis excepturi quas laborum, voluptas illum dolorum aliquam hic unde porro?</p>
+        <span> Somente Texto</span><span> outro texto na mesma linha</span>
+
+        <h1>Listas</h1>
+        <p>O html possui listas não ordenadas e listas ordenadas, as listas ordenadas não ordenadas são definidas com a tag &lt;ul&gt; enquanto usamos &lt;ol&gt; para listas ordenadas. </p>
+
+        <ul>
+            <li>Panqueca</li>
+            <li>Pera</li>
+            <li>Uva</li>
+            <li>maça</li>
+        </ul>
+        <ol start="5" type>
+            <li>Panqueca</li>
+            <li>Pera</li>
+            <li>Uva</li>
+            <li>maça</li>
+        </ol>
+        <dl>
+            <dt>Café</dt>
+            <dd>Bebida fundamental a vida!</dd>
+            <dt>Água</dt>
+            <dd>Segunda bebida fundamental a vida!</dd>
+        </dl>
+
+        <h1>Tags de formatação de texto</h1>
+        <p>Lorem 
+            <strong> dolor</strong>, 
+            10<sub>2</sub>=2<sub>10</sub> 
+            consectetur <br>adipisicing elit. Dolor fugiat tempora suscipit <mark>texto marcado</mark> eveniet, alias voluptate facere quod sequi aspernatur reprehenderit earum, quisquam dolore recusandae optio ipsam facilis quo vel at.</p>
+
+
+        <h1>Links e Imagens</h1>
+         <a target="_blank" href="https://www.google.com">  Google </a>
+        <a href="https://www.google.com">
+            
+         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. A, tempora eligendi autem libero cupiditate atque debitis consectetur dicta eaque sunt, nihil possimus soluta hic provident rerum dolores doloremque corporis! Blanditiis.</p>
+
+        </a>
+        <br>
+        <img src="./imgs/Todos-os-Power-Rangers.webp" alt="Power Rangers"  >
+        <img src="https://wallpapers.com/images/hd/dragon-ball-pictures-1fqnalnytob0klx9.jpg" " >
+
+        <h1>tabelas  no html</h1>
+
+        <table>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Profissão</th>
+            </tr>
+            <tr>
+                <td>João</td>
+                <td>20</td>
+                <td>Estudante</td>
+            </tr>
+            <tr>
+                <td>Maria</td>
+                <td>30</td>
+                <td>Desenvolvedora</td>
+            </tr>
+        </table>
+
+    <h1>formulários</h1>
+
+    <form action="https://google.com/search">
+
+        <label for="q">Query de busca</label>
+        <input id="q" name="q" type="text">
+        <input id="q" name="pipoca" type="text">
+        <input type="submit" value="Buscar">
+
+    </form>
+
+        
     </body>
 </html>
