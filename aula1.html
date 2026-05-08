@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 1 — Introdução ao JavaScript</title>
+<style>
+  :root {
+    --green:        #006633;
+    --green-mid:    #007a3d;
+    --green-lt:     #d6ede0;
+    --green-xlt:    #eef7f1;
+    --green-border: #b3d9c4;
+    --accent:       #f4a928;
+    --accent-lt:    #fef3dc;
+    --accent-border:#f4d080;
+    --blue:         #1a5c9e;
+    --blue-lt:      #dce9f8;
+    --coral:        #c0392b;
+    --coral-lt:     #fce8e6;
+    --purple:       #5b3a9e;
+    --purple-lt:    #ece6f8;
+    --bg2:          #f5f6f8;
+    --bg3:          #eef0f3;
+    --border:       #e2e5ea;
+    --border2:      #d0d4db;
+    --text:         #1a1d23;
+    --muted:        #5a6070;
+    --muted2:       #8a91a0;
+    --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    --sans: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  /* ── Top bar ── */
+  .topbar { width: 100%; background: var(--green); display: flex; justify-content: center; }
+  .topbar-inner { width: 100%; max-width: 980px; padding: 10px 28px; display: flex; align-items: center; justify-content: space-between; }
+  .ifsc-brand { display: flex; align-items: center; gap: 12px; }
+  .ifsc-logo-wrap svg { display: block; }
+  .ifsc-text { color: #fff; }
+  .ifsc-text .inst   { font-size: 10px; font-weight: 400; opacity: 0.82; letter-spacing: 0.03em; line-height: 1.4; }
+  .ifsc-text .campus { font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+  .workshop-label { font-family: var(--mono); font-size: 11px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.06em; }
+
+  /* ── Header ── */
+  .header { width: 100%; max-width: 980px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 28px 0; }
+  .header-label { font-family: var(--mono); font-size: 12px; color: var(--muted2); white-space: nowrap; }
+  .header-nav { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .progress-bar { flex: 1; min-width: 80px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+  .slide-counter { font-family: var(--mono); font-size: 12px; color: var(--muted2); min-width: 48px; text-align: center; }
+
+  /* ── Stage ── */
+  .stage { width: 100%; max-width: 980px; padding: 20px 28px 0; flex: 1; }
+  .slide { display: none; animation: fadeIn 0.28s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Typography ── */
+  .slide-tag { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  h1.slide-title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 10px; }
+  h2.slide-title { font-size: clamp(20px, 3vw, 32px); font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 14px; }
+  .subtitle { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 640px; margin-bottom: 24px; }
+
+  /* ── Cards ── */
+  .cards { display: grid; gap: 12px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .card h3 { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .card-icon { font-size: 20px; margin-bottom: 8px; }
+  .card.accent-green  { border-left: 3px solid var(--green); }
+  .card.accent-amber  { border-left: 3px solid var(--accent); }
+  .card.accent-blue   { border-left: 3px solid var(--blue); }
+  .card.accent-coral  { border-left: 3px solid var(--coral); }
+  .card.accent-purple { border-left: 3px solid var(--purple); }
+
+  /* ── Terminal ── */
+  .terminal { background: #1b1f2b; border: 1px solid #2d3245; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+  .terminal-bar { background: #252a3a; padding: 7px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #2d3245; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; } .dot-a { background: #febc2e; } .dot-g { background: #28c840; }
+  .terminal-bar .path { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: #6b7494; }
+  .terminal-body { padding: 12px 16px; font-family: var(--mono); font-size: 12.5px; line-height: 1.95; }
+  .cmd  { color: #e8eaf2; } .cmd::before { content: '$ '; color: #3ecfb2; }
+  .out  { color: #c8ccda; }
+  .res  { color: #6b7494; }
+  .cmt  { color: #3d4460; font-style: italic; } .cmt::before { content: '// '; }
+  .hl   { color: #f4a928; }   /* keywords     */
+  .hlg  { color: #6bc97a; }   /* strings       */
+  .hlp  { color: #a78bfa; }   /* numbers/bool  */
+  .hlb  { color: #5b9cf6; }   /* builtins      */
+  .hlr  { color: #ff7c7c; }   /* errors/warn   */
+  .ind  { padding-left: 1.4em; }
+  .ind2 { padding-left: 2.8em; }
+  .sp   { display: block; height: 5px; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin: 2px; }
+  .badge-green  { background: var(--green-lt);  color: var(--green);  border: 1px solid var(--green-border); }
+  .badge-amber  { background: var(--accent-lt); color: #8a5c00;       border: 1px solid var(--accent-border); }
+  .badge-blue   { background: var(--blue-lt);   color: var(--blue);   border: 1px solid #a8c8f0; }
+  .badge-coral  { background: var(--coral-lt);  color: var(--coral);  border: 1px solid #f0b8b3; }
+  .badge-purple { background: var(--purple-lt); color: var(--purple); border: 1px solid #c4b3ea; }
+
+  /* ── Steps ── */
+  .steps { list-style: none; }
+  .steps li { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .steps li:last-child { border-bottom: none; }
+  .step-num { min-width: 26px; height: 26px; background: var(--green-xlt); border: 1px solid var(--green-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+  .steps li div { font-size: 13.5px; line-height: 1.6; }
+  .steps li div strong { color: var(--text); display: block; margin-bottom: 1px; }
+  .steps li div span  { color: var(--muted); font-size: 12.5px; }
+
+  /* ── Cover ── */
+  .cover-wrap { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 52px 48px 44px; position: relative; overflow: hidden; }
+  .cover-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent); border-radius: 14px 0 0 14px; }
+  .cover-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+
+  /* ── Exercise slides ── */
+  .exercise-wrap { background: var(--accent-lt); border: 1px solid var(--accent-border); border-radius: 14px; padding: 40px 40px 32px; position: relative; overflow: hidden; }
+  .exercise-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent); border-radius: 14px 0 0 14px; }
+  .exercise-wrap .slide-tag { color: #8a5c00; }
+  .exercise-wrap h2.slide-title { color: var(--text); margin-bottom: 20px; }
+  .ex-card { background: #fff; border: 1px solid var(--accent-border); border-radius: 10px; padding: 14px 16px; }
+  .ex-card .ex-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: #8a5c00; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .ex-card p { font-size: 13px; color: var(--text); line-height: 1.65; }
+  .ex-card code { font-family: var(--mono); font-size: 0.87em; background: var(--accent-lt); color: #8a5c00; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--accent-border); }
+
+  /* ── Tip / Warn ── */
+  .tip  { background: var(--green-xlt); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .tip  strong { color: var(--green); }
+  .warn { background: var(--accent-lt); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .warn strong { color: #8a5c00; }
+  .info { background: var(--blue-lt); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .info strong { color: var(--blue); }
+
+  /* ── Layout helpers ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin: 14px 0 6px; }
+  .section-label:first-child { margin-top: 0; }
+  code { font-family: var(--mono); font-size: 0.87em; background: var(--bg3); color: var(--green); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  p.body-text { font-size: 13.5px; line-height: 1.8; color: var(--muted); margin-bottom: 12px; }
+
+  /* ── Operator table ── */
+  .op-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  .op-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .op-table tr:last-child td { border-bottom: none; }
+  .op-table td:first-child { color: var(--accent); font-weight: 700; width: 60px; }
+  .op-table td:last-child { color: var(--muted); }
+  .op-table .divider td { background: var(--bg3); color: var(--muted2); font-family: var(--sans); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; }
+  .op-table .rec td:first-child { color: var(--green); }
+
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; margin: 10px 0; }
+  .tl-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; position: relative; }
+  .tl-item:not(:last-child)::after { content:''; position: absolute; left: 11px; top: 32px; bottom: -4px; width: 2px; background: var(--border2); }
+  .tl-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--accent-lt); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--mono); font-size: 9px; font-weight: 700; color: #8a5c00; }
+  .tl-content strong { display: block; font-size: 13px; color: var(--text); }
+  .tl-content span { font-size: 12px; color: var(--muted); }
+
+  /* ── Nav ── */
+  .nav { width: 100%; max-width: 980px; display: flex; align-items: center; justify-content: space-between; padding: 18px 28px 24px; }
+  .nav-btn { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--border2); border-radius: 8px; padding: 9px 18px; color: var(--text); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.18s; font-family: var(--sans); }
+  .nav-btn:hover { background: var(--accent-lt); border-color: var(--accent-border); color: #8a5c00; }
+  .nav-btn:active { transform: scale(0.97); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .nav-btn.icon-only { width: 34px; height: 34px; padding: 0; justify-content: center; flex-shrink: 0; font-size: 17px; }
+  .nav-dots { display: flex; gap: 6px; }
+  .dot-nav { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: all 0.2s; }
+  .dot-nav.active { background: var(--accent); transform: scale(1.35); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .cards-2, .cards-3, .two-col { grid-template-columns: 1fr; }
+    .stage, .header, .nav { padding-left: 14px; padding-right: 14px; }
+    .topbar-inner { padding: 10px 14px; }
+    .cover-wrap, .exercise-wrap { padding: 32px 22px 28px; }
+    .header { flex-wrap: wrap; }
+    .header-label { width: 100%; }
+    .header .nav-dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-inner" id="topbar-inner"></div></div>
+
+<div class="header">
+  <span class="header-label" id="header-label"></span>
+  <div class="header-nav">
+    <button class="nav-btn icon-only js-prev" aria-label="Anterior" title="Anterior">‹</button>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+    <div class="slide-counter" id="counter"></div>
+    <div class="nav-dots" data-dots></div>
+    <button class="nav-btn icon-only js-next" aria-label="Próximo" title="Próximo">›</button>
+  </div>
+</div>
+
+<div class="stage">
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 1 — CAPA
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="cover-wrap">
+    <div class="cover-stripe"></div>
+    <div class="slide-tag">Técnico em Informática · Aula 1</div>
+    <h1 class="slide-title">Introdução ao<br>JavaScript</h1>
+    <p class="subtitle">Da Web estática à linguagem mais usada do mundo — fundamentos, variáveis, tipos, seleção, repetição e funções.</p>
+    <div class="cover-meta">
+      <span class="badge badge-amber">História &amp; Motivação</span>
+      <span class="badge badge-green">Variáveis &amp; Tipos</span>
+      <span class="badge badge-blue">Seleção &amp; Repetição</span>
+      <span class="badge badge-purple">Funções</span>
+      <span class="badge badge-coral">Exercícios</span>
+    </div>
+    <div style="margin-top:20px; font-size:12px; color:var(--muted2)">Pré-requisitos: HTML básico · Noções de lógica · 4 horas de aula</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 2 — OBJETIVOS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Abertura · Objetivos</div>
+  <h2 class="slide-title">Ao final desta aula você será capaz de…</h2>
+
+  <div class="two-col">
+    <ul class="steps">
+      <li><div class="step-num">1</div><div><strong>Explicar o que é JavaScript</strong><span>Origem, propósito e por que se tornou essencial na Web.</span></div></li>
+      <li><div class="step-num">2</div><div><strong>Declarar variáveis</strong><span>Usar <code>let</code>, <code>const</code> e entender quando evitar <code>var</code>.</span></div></li>
+      <li><div class="step-num">3</div><div><strong>Identificar tipos de dados</strong><span>number, string, boolean, undefined e null.</span></div></li>
+      <li><div class="step-num">4</div><div><strong>Usar estruturas de seleção</strong><span><code>if</code>, <code>else if</code>, <code>else</code> e <code>switch</code>.</span></div></li>
+    </ul>
+    <ul class="steps">
+      <li><div class="step-num">5</div><div><strong>Usar estruturas de repetição</strong><span><code>for</code>, <code>while</code> e <code>do while</code>.</span></div></li>
+      <li><div class="step-num">6</div><div><strong>Criar funções</strong><span>Declaração, parâmetros, retorno e arrow functions.</span></div></li>
+      <li><div class="step-num">7</div><div><strong>Resolver pequenos problemas</strong><span>Exercício integrador: classificar alunos por média.</span></div></li>
+      <li><div class="step-num" style="font-size:14px">💡</div><div><strong>Ferramentas necessárias</strong><span>Navegador + editor de texto + arquivo HTML. Nada mais.</span></div></li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 3 — A WEB ANTES DO JS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 1 · História e Motivação</div>
+  <h2 class="slide-title">A Web antes do JavaScript</h2>
+  <p class="subtitle">Em 1995, páginas Web eram documentos estáticos. O navegador recebia HTML e apenas exibia.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Uma página típica de 1994</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">pagina.html</span>
+        </div>
+        <div class="terminal-body">
+          <div class="out">&lt;<span class="hl">h1</span>&gt;Bem-vindo&lt;/<span class="hl">h1</span>&gt;</div>
+          <div class="out">&lt;<span class="hl">p</span>&gt;Esta é uma página estática.&lt;/<span class="hl">p</span>&gt;</div>
+          <div class="out">&lt;<span class="hl">p</span>&gt;Para atualizar, recarregue.&lt;/<span class="hl">p</span>&gt;</div>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:12px">
+        <strong>O problema:</strong> qualquer interação exigia uma requisição ao servidor. Formulário inválido? Página recarrega. Menu aberto? Página recarrega.
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">O que era impossível sem JS</div>
+      <div class="cards" style="gap:8px">
+        <div class="card accent-coral" style="padding:11px 14px">
+          <h3>❌ Validar formulários no cliente</h3>
+          <p>Todo dado precisava ir ao servidor para ser verificado.</p>
+        </div>
+        <div class="card accent-coral" style="padding:11px 14px">
+          <h3>❌ Mostrar/esconder elementos</h3>
+          <p>Menus, abas e modais exigiam recarga de página.</p>
+        </div>
+        <div class="card accent-coral" style="padding:11px 14px">
+          <h3>❌ Reagir a eventos do usuário</h3>
+          <p>Cliques, teclas e movimentos do mouse eram ignorados.</p>
+        </div>
+        <div class="card accent-coral" style="padding:11px 14px">
+          <h3>❌ Atualizar conteúdo dinamicamente</h3>
+          <p>Não havia forma de alterar o conteúdo sem recarregar tudo.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <strong>A solução:</strong> uma linguagem que rodasse <em>dentro do próprio navegador</em>.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 4 — NASCIMENTO DO JS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 1 · História e Motivação</div>
+  <h2 class="slide-title">O nascimento do JavaScript</h2>
+
+  <div class="two-col">
+    <div>
+      <p class="body-text">Em 1995, <strong style="color:var(--text)">Brendan Eich</strong> foi contratado pela Netscape para criar uma linguagem de script para o navegador. A primeira versão foi escrita em aproximadamente <strong style="color:var(--text)">10 dias</strong>.</p>
+
+      <div class="section-label">A história do nome</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot">1</div>
+          <div class="tl-content">
+            <strong>Mocha</strong>
+            <span>Nome interno durante o desenvolvimento.</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">2</div>
+          <div class="tl-content">
+            <strong>LiveScript</strong>
+            <span>Primeiro nome público, ao ser lançado.</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--green-lt); border-color:var(--green); color:var(--green)">3</div>
+          <div class="tl-content">
+            <strong>JavaScript</strong>
+            <span>Renomeado por decisão de marketing — Java estava na moda.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn" style="margin-top:12px">
+        <strong>Atenção:</strong> Java está para JavaScript assim como <em>carro</em> está para <em>carpete</em>: os nomes parecem relacionados, mas são coisas completamente diferentes.
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">O primeiro programa interativo</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">index.html</span>
+        </div>
+        <div class="terminal-body">
+          <div class="out">&lt;<span class="hl">button</span> <span class="hlb">onclick</span>=<span class="hlg">"alert('Olá!')"</span>&gt;</div>
+          <div class="out ind">Clique aqui</div>
+          <div class="out">&lt;/<span class="hl">button</span>&gt;</div>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>Isso mudou tudo:</strong> uma ação do usuário (<em>clique</em>) gera uma resposta imediata (<em>alerta</em>), sem nenhuma requisição ao servidor.
+      </div>
+
+      <div class="section-label" style="margin-top:14px">ECMAScript — o padrão oficial</div>
+      <div class="cards" style="gap:8px">
+        <div class="card" style="padding:10px 14px">
+          <p style="font-size:12.5px">O nome técnico da linguagem é <strong>ECMAScript</strong>. Por isso aparecem nomes como <span class="badge badge-blue" style="font-size:10px">ES5</span> <span class="badge badge-green" style="font-size:10px">ES6 / ES2015</span> <span class="badge badge-purple" style="font-size:10px">ES2023</span></p>
+        </div>
+        <div class="card accent-green" style="padding:10px 14px; background:var(--green-xlt)">
+          <h3 style="font-size:12px; color:var(--green)">ES6 (2015) — a grande virada</h3>
+          <p style="font-size:12px">Trouxe <code>let</code>, <code>const</code>, arrow functions, classes, template strings e módulos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 5 — JS HOJE
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 1 · Curiosidades</div>
+  <h2 class="slide-title">JavaScript em 2025</h2>
+  <p class="subtitle">Começou como linguagem "simples" para scripts de página. Hoje está em praticamente todos os ambientes computacionais.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Onde JS roda</div>
+      <div class="cards" style="gap:8px">
+        <div class="card accent-amber" style="padding:11px 14px"><h3>🌐 Navegadores</h3><p>Chrome, Firefox, Safari, Edge — todo navegador moderno tem um motor JS.</p></div>
+        <div class="card accent-green" style="padding:11px 14px"><h3>🖥️ Servidores</h3><p>Node.js permite rodar JavaScript no servidor, fora do navegador.</p></div>
+        <div class="card accent-blue" style="padding:11px 14px"><h3>📱 Aplicativos móveis</h3><p>React Native, Ionic — JS para iOS e Android.</p></div>
+        <div class="card accent-purple" style="padding:11px 14px"><h3>🖱️ Desktop e jogos</h3><p>Electron (VS Code é JS!), Phaser, Three.js, automação.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Motores JavaScript nos navegadores</div>
+      <div class="cards" style="gap:8px; margin-bottom:14px">
+        <div class="card" style="padding:11px 14px; display:flex; align-items:center; gap:12px">
+          <div style="font-size:22px">🔵</div>
+          <div><strong style="font-size:13px">V8</strong><p>Chrome, Edge, Node.js</p></div>
+        </div>
+        <div class="card" style="padding:11px 14px; display:flex; align-items:center; gap:12px">
+          <div style="font-size:22px">🦊</div>
+          <div><strong style="font-size:13px">SpiderMonkey</strong><p>Firefox</p></div>
+        </div>
+        <div class="card" style="padding:11px 14px; display:flex; align-items:center; gap:12px">
+          <div style="font-size:22px">🧭</div>
+          <div><strong style="font-size:13px">JavaScriptCore</strong><p>Safari</p></div>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>Para começar agora:</strong> você precisa de um navegador, um editor de texto e um arquivo <code>.html</code>. Nada para instalar.
+      </div>
+
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">Console do navegador — F12</span>
+        </div>
+        <div class="terminal-body">
+          <div class="cmd"><span class="hlb">console</span>.log(<span class="hlg">"Olá, JavaScript!"</span>)</div>
+          <div class="res">← Olá, JavaScript!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 6 — PECULIARIDADES
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 1 · Peculiaridades da linguagem</div>
+  <h2 class="slide-title">Decisões históricas que você vai encontrar</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Tipagem dinâmica</div>
+      <p class="body-text">Uma variável pode receber valores de <strong style="color:var(--text)">tipos diferentes</strong> ao longo do programa:</p>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> valor = <span class="hlp">10</span>;</div>
+          <div class="out">valor = <span class="hlg">"dez"</span>;   <span style="color:#3d4460;font-style:italic">// string agora</span></div>
+          <div class="out">valor = <span class="hlp">true</span>;    <span style="color:#3d4460;font-style:italic">// boolean agora</span></div>
+        </div>
+      </div>
+      <div class="tip"><strong>Facilita</strong> scripts pequenos. <strong>Exige cuidado</strong> em programas maiores.</div>
+
+      <div class="section-label">Coerção automática de tipos</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlg">"5"</span> + <span class="hlp">2</span>);  <span style="color:#3d4460;font-style:italic">// "52" (concatenou)</span></div>
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlg">"5"</span> - <span class="hlp">2</span>);  <span style="color:#3d4460;font-style:italic">// 3   (converteu)</span></div>
+        </div>
+      </div>
+      <div class="warn"><strong>Use conversões explícitas</strong> para evitar surpresas:<br><code>Number("5")</code> &nbsp;·&nbsp; <code>String(10)</code> &nbsp;·&nbsp; <code>Boolean(1)</code></div>
+    </div>
+
+    <div>
+      <div class="section-label">var → let e const</div>
+      <p class="body-text">O <code>var</code> original tinha comportamento de escopo confuso. O ES6 resolveu isso:</p>
+
+      <div class="cards" style="gap:8px">
+        <div class="card accent-green" style="padding:12px 14px; background:var(--green-xlt)">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+            <h3 style="color:var(--green)">const</h3>
+            <span class="badge badge-green" style="font-size:10px">use sempre que possível</span>
+          </div>
+          <p>Valor não pode ser reatribuído. Deixa a intenção clara.</p>
+          <div class="terminal" style="margin-top:8px">
+            <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+              <div class="out"><span class="hl">const</span> pi = <span class="hlp">3.14159</span>;</div>
+            </div>
+          </div>
+        </div>
+        <div class="card accent-blue" style="padding:12px 14px">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+            <h3 style="color:var(--blue)">let</h3>
+            <span class="badge badge-blue" style="font-size:10px">quando o valor muda</span>
+          </div>
+          <p>Valor pode ser reatribuído. Escopo de bloco.</p>
+          <div class="terminal" style="margin-top:8px">
+            <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+              <div class="out"><span class="hl">let</span> contador = <span class="hlp">0</span>;</div>
+              <div class="out">contador++;</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:12px 14px; opacity:0.75">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+            <h3>var</h3>
+            <span class="badge badge-coral" style="font-size:10px">evitar em código novo</span>
+          </div>
+          <p>Escopo de função, comportamento histórico confuso.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 7 — ONDE ESCREVER JS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 2 · Entrando na linguagem</div>
+  <h2 class="slide-title">Onde escrever JavaScript?</h2>
+  <p class="subtitle">Há três formas de incluir JavaScript em uma página HTML.</p>
+
+  <div class="cards cards-3" style="gap:14px">
+
+    <div class="card" style="padding:16px">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+        <span class="badge badge-coral">1</span>
+        <h3 style="font-size:13px">Atributo HTML</h3>
+      </div>
+      <p style="margin-bottom:10px">Diretamente no elemento. Simples, mas mistura estrutura com comportamento.</p>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body" style="font-size:11.5px">
+          <div class="out">&lt;<span class="hl">button</span></div>
+          <div class="out ind"><span class="hlb">onclick</span>=<span class="hlg">"alert('Olá!')"</span></div>
+          <div class="out">&gt;Clique&lt;/<span class="hl">button</span>&gt;</div>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:8px; font-size:12px"><strong>Não recomendado</strong> para projetos reais.</div>
+    </div>
+
+    <div class="card" style="padding:16px">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+        <span class="badge badge-amber">2</span>
+        <h3 style="font-size:13px">Tag &lt;script&gt;</h3>
+      </div>
+      <p style="margin-bottom:10px">Código JS dentro do HTML, geralmente antes de fechar o <code>&lt;body&gt;</code>.</p>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body" style="font-size:11.5px">
+          <div class="out">&lt;<span class="hl">script</span>&gt;</div>
+          <div class="out ind"><span class="hlb">console</span>.log(</div>
+          <div class="out ind2"><span class="hlg">"Olá!"</span></div>
+          <div class="out ind">);</div>
+          <div class="out">&lt;/<span class="hl">script</span>&gt;</div>
+        </div>
+      </div>
+      <div class="tip" style="margin-top:8px; font-size:12px"><strong>Bom</strong> para aprender e para páginas simples.</div>
+    </div>
+
+    <div class="card accent-green" style="padding:16px; background:var(--green-xlt)">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+        <span class="badge badge-green">3</span>
+        <h3 style="font-size:13px; color:var(--green)">Arquivo externo</h3>
+      </div>
+      <p style="margin-bottom:10px">JS em arquivo separado <code>.js</code>, referenciado no HTML.</p>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">index.html</span></div>
+        <div class="terminal-body" style="font-size:11.5px">
+          <div class="out">&lt;<span class="hl">script</span> <span class="hlb">src</span>=<span class="hlg">"script.js"</span>&gt;&lt;/<span class="hl">script</span>&gt;</div>
+        </div>
+      </div>
+      <div class="terminal" style="margin-top:6px">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body" style="font-size:11.5px">
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlg">"Olá!"</span>);</div>
+        </div>
+      </div>
+      <div class="tip" style="margin-top:8px; font-size:12px; background:var(--green-lt); border-color:var(--green)"><strong>Recomendado</strong> para projetos organizados.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 8 — VARIÁVEIS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 3 · Variáveis</div>
+  <h2 class="slide-title">Variáveis: armazenando valores</h2>
+
+  <div class="two-col">
+    <div>
+      <p class="body-text">Variáveis são espaços nomeados na memória para guardar valores durante a execução do programa.</p>
+
+      <div class="section-label">let — valor pode mudar</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> contador = <span class="hlp">0</span>;</div>
+          <div class="out">contador = contador + <span class="hlp">1</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(contador); <span style="color:#3d4460;font-style:italic">// 1</span></div>
+        </div>
+      </div>
+
+      <div class="section-label">const — valor fixo</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">const</span> pi = <span class="hlp">3.14159</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(pi);</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">const</span> nome = <span class="hlg">"Ana"</span>;</div>
+          <div class="out">nome = <span class="hlg">"Maria"</span>; <span style="color:#ff7c7c;font-style:italic">// ❌ Erro!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Boas práticas de nomenclatura</div>
+      <div class="cards" style="gap:9px; margin-bottom:12px">
+        <div class="card accent-coral" style="padding:12px 14px">
+          <h3 style="color:var(--coral)">❌ Evitar</h3>
+          <div class="terminal" style="margin-top:8px">
+            <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+              <div class="out" style="color:#ff7c7c"><span class="hl">let</span> x = <span class="hlg">"João"</span>;</div>
+              <div class="out" style="color:#ff7c7c"><span class="hl">let</span> a = <span class="hlp">20</span>;</div>
+              <div class="out" style="color:#ff7c7c"><span class="hl">let</span> v = <span class="hlp">true</span>;</div>
+            </div>
+          </div>
+        </div>
+        <div class="card accent-green" style="padding:12px 14px; background:var(--green-xlt)">
+          <h3 style="color:var(--green)">✓ Preferir</h3>
+          <div class="terminal" style="margin-top:8px">
+            <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+              <div class="out"><span class="hl">let</span> nomeAluno = <span class="hlg">"João"</span>;</div>
+              <div class="out"><span class="hl">let</span> idadeAluno = <span class="hlp">20</span>;</div>
+              <div class="out"><span class="hl">let</span> aprovado = <span class="hlp">true</span>;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">camelCase — padrão JavaScript</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body" style="font-size:12px">
+          <div class="out"><span class="hlb">nomeCompleto</span> &nbsp; <span class="hlg">mediaFinal</span> &nbsp; <span class="hlp">quantidadeAlunos</span></div>
+        </div>
+      </div>
+
+      <div class="info">
+        <strong>Regra simples:</strong> <code>const</code> sempre que possível · <code>let</code> quando o valor muda · nunca <code>var</code>.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 9 — TIPOS DE DADOS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 4 · Tipos de Dados</div>
+  <h2 class="slide-title">Tipos de dados em JavaScript</h2>
+  <p class="subtitle">O tipo determina o que o valor é e o que se pode fazer com ele.</p>
+
+  <div class="cards cards-3" style="gap:10px; margin-bottom:14px">
+    <div class="card accent-blue" style="padding:14px 16px">
+      <div class="card-icon">🔢</div>
+      <h3>number</h3>
+      <p>Inteiros e decimais. Um único tipo para ambos.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">let</span> idade = <span class="hlp">18</span>;</div>
+          <div class="out"><span class="hl">let</span> altura = <span class="hlp">1.75</span>;</div>
+        </div>
+      </div>
+    </div>
+    <div class="card accent-green" style="padding:14px 16px">
+      <div class="card-icon">📝</div>
+      <h3>string</h3>
+      <p>Texto entre aspas simples, duplas ou crase.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">let</span> nome = <span class="hlg">"Ana"</span>;</div>
+          <div class="out"><span class="hl">let</span> cidade = <span class="hlg">'SC'</span>;</div>
+        </div>
+      </div>
+    </div>
+    <div class="card accent-purple" style="padding:14px 16px">
+      <div class="card-icon">⚖️</div>
+      <h3>boolean</h3>
+      <p>Apenas dois valores possíveis.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">let</span> aprovado = <span class="hlp">true</span>;</div>
+          <div class="out"><span class="hl">let</span> pago = <span class="hlp">false</span>;</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div class="card-icon">❓</div>
+      <h3>undefined</h3>
+      <p>Variável declarada, mas sem valor atribuído ainda.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">let</span> endereco;</div>
+          <div class="res">→ undefined</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div class="card-icon">∅</div>
+      <h3>null</h3>
+      <p>Ausência <em>intencional</em> de valor. O programador colocou "vazio" de propósito.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">let</span> telefone = <span class="hlp">null</span>;</div>
+        </div>
+      </div>
+    </div>
+    <div class="card accent-amber" style="padding:14px 16px">
+      <div class="card-icon">🔍</div>
+      <h3>typeof</h3>
+      <p>Operador que retorna o tipo de um valor como string.</p>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-body" style="padding:8px 12px; font-size:11.5px">
+          <div class="out"><span class="hl">typeof</span> <span class="hlp">42</span>     <span style="color:#3d4460;font-style:italic">// "number"</span></div>
+          <div class="out"><span class="hl">typeof</span> <span class="hlg">"olá"</span>  <span style="color:#3d4460;font-style:italic">// "string"</span></div>
+          <div class="out"><span class="hl">typeof</span> <span class="hlp">true</span>   <span style="color:#3d4460;font-style:italic">// "boolean"</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>Curiosidade histórica:</strong> <code>typeof null</code> retorna <code>"object"</code>. Isso é um bug antigo da linguagem que foi mantido por compatibilidade — <code>null</code> não é um objeto.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 10 — NUMBER E STRING
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 4 · Tipos de Dados</div>
+  <h2 class="slide-title">Trabalhando com numbers e strings</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Operações com numbers</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> soma  = <span class="hlp">10</span> + <span class="hlp">5</span>;   <span style="color:#3d4460;font-style:italic">// 15</span></div>
+          <div class="out"><span class="hl">let</span> sub   = <span class="hlp">10</span> - <span class="hlp">5</span>;   <span style="color:#3d4460;font-style:italic">// 5</span></div>
+          <div class="out"><span class="hl">let</span> mult  = <span class="hlp">10</span> * <span class="hlp">5</span>;   <span style="color:#3d4460;font-style:italic">// 50</span></div>
+          <div class="out"><span class="hl">let</span> div   = <span class="hlp">10</span> / <span class="hlp">4</span>;   <span style="color:#3d4460;font-style:italic">// 2.5</span></div>
+          <div class="out"><span class="hl">let</span> resto = <span class="hlp">10</span> % <span class="hlp">3</span>;   <span style="color:#3d4460;font-style:italic">// 1</span></div>
+          <div class="out"><span class="hl">let</span> pot   = <span class="hlp">2</span> ** <span class="hlp">8</span>;   <span style="color:#3d4460;font-style:italic">// 256</span></div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">let</span> nota1 = <span class="hlp">8</span>, nota2 = <span class="hlp">7</span>;</div>
+          <div class="out"><span class="hl">let</span> media = (nota1 + nota2) / <span class="hlp">2</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(media); <span style="color:#3d4460;font-style:italic">// 7.5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Strings — concatenação e template strings</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// aspas duplas ou simples</div>
+          <div class="out"><span class="hl">let</span> nome = <span class="hlg">"Maria"</span>;</div>
+          <div class="out"><span class="hl">let</span> cidade = <span class="hlg">'Blumenau'</span>;</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// concatenação com +</div>
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlg">"Olá, "</span> + nome);</div>
+          <div class="res">← Olá, Maria</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// template string com crase ✓</div>
+          <div class="out"><span class="hl">let</span> idade = <span class="hlp">18</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(</div>
+          <div class="out ind"><span class="hlg">`${nome} tem ${idade} anos.`</span></div>
+          <div class="out">);</div>
+          <div class="res">← Maria tem 18 anos.</div>
+        </div>
+      </div>
+      <div class="tip"><strong>Prefira template strings</strong> (crase + <code>${}</code>) à concatenação com <code>+</code> — são mais legíveis.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 11 — EXERCÍCIOS VARIÁVEIS E TIPOS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="exercise-wrap">
+    <div class="exercise-stripe"></div>
+    <div class="slide-tag">Exercícios · Variáveis e Tipos</div>
+    <h2 class="slide-title">Mão na massa</h2>
+
+    <div class="cards cards-2" style="gap:12px">
+      <div class="ex-card">
+        <div class="ex-label">Teórico 1</div>
+        <p>Explique a diferença entre <code>let</code>, <code>const</code> e <code>var</code>. Em que situação cada um deve ser usado?</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Teórico 2</div>
+        <p>Qual será o tipo retornado por <code>typeof</code> para cada valor abaixo?<br>
+        <code>10</code> &nbsp; <code>"10"</code> &nbsp; <code>true</code> &nbsp; <code>undefined</code></p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 3</div>
+        <p>Crie três variáveis: <code>nome</code>, <code>idade</code> e <code>curso</code>. Exiba no console usando template string:<br>
+        <em>Meu nome é Ana, tenho 17 anos e estudo Informática.</em></p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 4</div>
+        <p>Crie variáveis <code>nota1</code> e <code>nota2</code>. Calcule a média e exiba:<br>
+        <em>A média do aluno foi 8.5.</em><br>
+        Use template string e operação matemática.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 12 — SELEÇÃO
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 5 · Estruturas de Seleção</div>
+  <h2 class="slide-title">if / else — tomando decisões</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Operadores relacionais</div>
+      <table class="op-table">
+        <tr><td>&gt;</td><td>maior que</td></tr>
+        <tr><td>&lt;</td><td>menor que</td></tr>
+        <tr><td>&gt;=</td><td>maior ou igual</td></tr>
+        <tr><td>&lt;=</td><td>menor ou igual</td></tr>
+        <tr class="divider"><td colspan="2">Comparação de igualdade</td></tr>
+        <tr class="rec"><td>===</td><td>igual <em>sem</em> conversão de tipo ✓</td></tr>
+        <tr class="rec"><td>!==</td><td>diferente <em>sem</em> conversão de tipo ✓</td></tr>
+        <tr><td>==</td><td>igual <em>com</em> conversão (evitar)</td></tr>
+        <tr><td>!=</td><td>diferente <em>com</em> conversão (evitar)</td></tr>
+      </table>
+      <div class="terminal" style="margin-top:10px">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body" style="font-size:12px">
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlp">5</span> == <span class="hlg">"5"</span>);  <span style="color:#3d4460;font-style:italic">// true  ⚠</span></div>
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlp">5</span> === <span class="hlg">"5"</span>); <span style="color:#3d4460;font-style:italic">// false ✓</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">if / else if / else</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> nota = <span class="hlp">8</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">if</span> (nota >= <span class="hlp">9</span>) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">"Excelente"</span>);</div>
+          <div class="out">} <span class="hl">else if</span> (nota >= <span class="hlp">6</span>) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">"Aprovado"</span>);</div>
+          <div class="out">} <span class="hl">else</span> {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">"Reprovado"</span>);</div>
+          <div class="out">}</div>
+        </div>
+      </div>
+
+      <div class="section-label">Operadores lógicos</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> idade = <span class="hlp">20</span>;</div>
+          <div class="out"><span class="hl">let</span> temCarteira = <span class="hlp">true</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">if</span> (idade >= <span class="hlp">18</span> && temCarteira) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">"Pode dirigir"</span>);</div>
+          <div class="out">}</div>
+        </div>
+      </div>
+      <div class="info"><strong>&amp;&amp;</strong> E lógico &nbsp;·&nbsp; <strong>||</strong> OU lógico &nbsp;·&nbsp; <strong>!</strong> NÃO lógico</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 13 — SWITCH
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 5 · Estruturas de Seleção</div>
+  <h2 class="slide-title">switch — múltiplas possibilidades</h2>
+  <p class="subtitle">Use <code>switch</code> quando um mesmo valor pode ter muitos casos distintos — é mais organizado que vários <code>if</code>.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> dia = <span class="hlp">2</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">switch</span> (dia) {</div>
+          <div class="out ind"><span class="hl">case</span> <span class="hlp">1</span>:</div>
+          <div class="out ind2"><span class="hlb">console</span>.log(<span class="hlg">"Domingo"</span>);</div>
+          <div class="out ind2"><span class="hl">break</span>;</div>
+          <div class="out ind"><span class="hl">case</span> <span class="hlp">2</span>:</div>
+          <div class="out ind2"><span class="hlb">console</span>.log(<span class="hlg">"Segunda-feira"</span>);</div>
+          <div class="out ind2"><span class="hl">break</span>;</div>
+          <div class="out ind"><span class="hl">case</span> <span class="hlp">3</span>:</div>
+          <div class="out ind2"><span class="hlb">console</span>.log(<span class="hlg">"Terça-feira"</span>);</div>
+          <div class="out ind2"><span class="hl">break</span>;</div>
+          <div class="out ind"><span class="hl">default</span>:</div>
+          <div class="out ind2"><span class="hlb">console</span>.log(<span class="hlg">"Dia inválido"</span>);</div>
+          <div class="out">}</div>
+          <div class="res">← Segunda-feira</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Anatomia do switch</div>
+      <div class="cards" style="gap:8px; margin-bottom:14px">
+        <div class="card accent-amber" style="padding:11px 14px">
+          <h3>switch (expressão)</h3>
+          <p>O valor a ser comparado contra os <code>case</code>.</p>
+        </div>
+        <div class="card accent-blue" style="padding:11px 14px">
+          <h3>case valor:</h3>
+          <p>Bloco executado quando a expressão é igual ao valor.</p>
+        </div>
+        <div class="card accent-coral" style="padding:11px 14px">
+          <h3>break</h3>
+          <p>Para a execução. Sem <code>break</code>, os casos seguintes também executam (<em>fall-through</em>).</p>
+        </div>
+        <div class="card" style="padding:11px 14px">
+          <h3>default</h3>
+          <p>Executado quando nenhum <code>case</code> foi satisfeito. Equivale ao <code>else</code>.</p>
+        </div>
+      </div>
+      <div class="tip"><strong>Use switch quando:</strong> um único valor pode assumir vários valores discretos conhecidos. Para condições com intervalos (<code>&gt;=</code>, <code>&lt;=</code>), prefira <code>if/else if</code>.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 14 — EXERCÍCIOS SELEÇÃO
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="exercise-wrap">
+    <div class="exercise-stripe"></div>
+    <div class="slide-tag">Exercícios · Seleção</div>
+    <h2 class="slide-title">Mão na massa</h2>
+
+    <div class="cards cards-2" style="gap:12px">
+      <div class="ex-card">
+        <div class="ex-label">Teórico 1</div>
+        <p>Explique a diferença entre <code>==</code> e <code>===</code>. Por que em JavaScript moderno preferimos <code>===</code>?</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Teórico 2</div>
+        <p>Em que situação o <code>switch</code> é mais organizado do que vários <code>if</code>? Dê um exemplo de uso adequado.</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 3</div>
+        <p>Crie um programa com variável <code>idade</code>. Exiba:<br>
+        <code>"Criança"</code> &lt; 12 &nbsp;·&nbsp; <code>"Adolescente"</code> 12–17 &nbsp;·&nbsp; <code>"Adulto"</code> ≥ 18</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 4</div>
+        <p>Crie um programa com variável <code>nota</code> (0–10) que exiba:<br>
+        <code>"Excelente"</code> ≥ 9 &nbsp;·&nbsp; <code>"Bom"</code> 7–8.9 &nbsp;·&nbsp; <code>"Regular"</code> 6–6.9 &nbsp;·&nbsp; <code>"Reprovado"</code> &lt; 6</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 15 — FOR
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 6 · Estruturas de Repetição</div>
+  <h2 class="slide-title">for — quando sabemos quantas vezes repetir</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Anatomia do for</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">for</span> (inicialização; condição; atualização) {</div>
+          <div class="out ind"><span style="color:#3d4460;font-style:italic">// bloco repetido</span></div>
+          <div class="out">}</div>
+        </div>
+      </div>
+      <div class="cards" style="gap:8px; margin-top:12px">
+        <div class="card accent-amber" style="padding:10px 13px">
+          <h3>Inicialização</h3>
+          <p>Executa uma vez antes de começar. Ex: <code>let i = 1</code></p>
+        </div>
+        <div class="card accent-blue" style="padding:10px 13px">
+          <h3>Condição</h3>
+          <p>Testada antes de cada iteração. Ex: <code>i &lt;= 10</code></p>
+        </div>
+        <div class="card accent-green" style="padding:10px 13px">
+          <h3>Atualização</h3>
+          <p>Executa ao final de cada iteração. Ex: <code>i++</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Exemplos</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// imprimir de 1 a 5</div>
+          <div class="out"><span class="hl">for</span> (<span class="hl">let</span> i = <span class="hlp">1</span>; i &lt;= <span class="hlp">5</span>; i++) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(i);</div>
+          <div class="out">}</div>
+          <div class="res">← 1  2  3  4  5</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// listar alunos</div>
+          <div class="out"><span class="hl">for</span> (<span class="hl">let</span> i = <span class="hlp">1</span>; i &lt;= <span class="hlp">5</span>; i++) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">`Aluno ${i}`</span>);</div>
+          <div class="out">}</div>
+          <div class="res">← Aluno 1  Aluno 2  …</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// somar de 1 a 100</div>
+          <div class="out"><span class="hl">let</span> soma = <span class="hlp">0</span>;</div>
+          <div class="out"><span class="hl">for</span> (<span class="hl">let</span> i = <span class="hlp">1</span>; i &lt;= <span class="hlp">100</span>; i++) {</div>
+          <div class="out ind">soma += i;</div>
+          <div class="out">}</div>
+          <div class="out"><span class="hlb">console</span>.log(soma);</div>
+          <div class="res">← 5050</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 16 — WHILE E DO WHILE
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 6 · Estruturas de Repetição</div>
+  <h2 class="slide-title">while e do while</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">while — testa antes de executar</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> contador = <span class="hlp">1</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">while</span> (contador &lt;= <span class="hlp">5</span>) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(contador);</div>
+          <div class="out ind">contador++;</div>
+          <div class="out">}</div>
+          <div class="res">← 1  2  3  4  5</div>
+        </div>
+      </div>
+
+      <div class="section-label">do while — executa pelo menos uma vez</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> numero = <span class="hlp">1</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">do</span> {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(numero);</div>
+          <div class="out ind">numero++;</div>
+          <div class="out">} <span class="hl">while</span> (numero &lt;= <span class="hlp">5</span>);</div>
+        </div>
+      </div>
+      <div class="info"><strong>do while</strong> sempre executa o bloco ao menos uma vez, pois a condição é verificada <em>depois</em>.</div>
+    </div>
+
+    <div>
+      <div class="section-label">⚠️ Cuidado: loop infinito</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">ERRO — não rode!</span></div>
+        <div class="terminal-body">
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// ❌ i nunca muda → loop infinito</div>
+          <div class="out"><span class="hl">let</span> i = <span class="hlp">1</span>;</div>
+          <div class="out"><span class="hl">while</span> (i &lt;= <span class="hlp">10</span>) {</div>
+          <div class="out ind" style="color:#ff7c7c"><span class="hlb">console</span>.log(i);</div>
+          <div class="out ind" style="color:#ff7c7c"><span style="color:#3d4460;font-style:italic">// i++ esquecido!</span></div>
+          <div class="out">}</div>
+        </div>
+      </div>
+      <div class="terminal" style="margin-top:8px">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">Correto ✓</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">let</span> i = <span class="hlp">1</span>;</div>
+          <div class="out"><span class="hl">while</span> (i &lt;= <span class="hlp">10</span>) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(i);</div>
+          <div class="out ind" style="color:#6bc97a">i++; <span style="color:#3d4460;font-style:italic">// garantir progresso</span></div>
+          <div class="out">}</div>
+        </div>
+      </div>
+      <div class="warn"><strong>Regra:</strong> sempre garanta que a condição do loop eventualmente se tornará falsa — caso contrário, o programa trava.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 17 — EXERCÍCIOS REPETIÇÃO
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="exercise-wrap">
+    <div class="exercise-stripe"></div>
+    <div class="slide-tag">Exercícios · Repetição</div>
+    <h2 class="slide-title">Mão na massa</h2>
+
+    <div class="cards cards-2" style="gap:12px">
+      <div class="ex-card">
+        <div class="ex-label">Teórico 1</div>
+        <p>Explique a diferença entre <code>for</code>, <code>while</code> e <code>do while</code>. Quando cada um é mais indicado?</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Teórico 2</div>
+        <p>O que é um loop infinito? Dê um exemplo de código que causaria isso e como corrigi-lo.</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 3</div>
+        <p>Crie um programa que exiba no console os números de <code>1</code> a <code>100</code> usando <code>for</code>.</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 4</div>
+        <p>Crie um programa que calcule a soma dos números de <code>1</code> a <code>50</code> usando repetição e exiba:<br>
+        <em>A soma é 1275</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 18 — FUNÇÕES
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 7 · Funções</div>
+  <h2 class="slide-title">Funções: blocos de código reutilizáveis</h2>
+
+  <div class="two-col">
+    <div>
+      <p class="body-text">Funções evitam repetição e organizam o código em unidades com propósito bem definido.</p>
+
+      <div class="section-label">Sem função — repetição</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body" style="font-size:12px">
+          <div class="out"><span class="hl">let</span> media1 = (<span class="hlp">8</span> + <span class="hlp">7</span>) / <span class="hlp">2</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(media1);</div>
+          <div class="out"><span class="hl">let</span> media2 = (<span class="hlp">5</span> + <span class="hlp">9</span>) / <span class="hlp">2</span>;</div>
+          <div class="out"><span class="hlb">console</span>.log(media2);</div>
+        </div>
+      </div>
+
+      <div class="section-label">Com função — organizado ✓</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">function</span> <span class="hlb">calcularMedia</span>(nota1, nota2) {</div>
+          <div class="out ind"><span class="hl">return</span> (nota1 + nota2) / <span class="hlp">2</span>;</div>
+          <div class="out">}</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlb">calcularMedia</span>(<span class="hlp">8</span>, <span class="hlp">7</span>)); <span style="color:#3d4460;font-style:italic">// 7.5</span></div>
+          <div class="out"><span class="hlb">console</span>.log(<span class="hlb">calcularMedia</span>(<span class="hlp">5</span>, <span class="hlp">9</span>)); <span style="color:#3d4460;font-style:italic">// 7</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Parâmetros e retorno</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body">
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// sem parâmetros</div>
+          <div class="out"><span class="hl">function</span> <span class="hlb">saudacao</span>() {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">"Olá!"</span>);</div>
+          <div class="out">}</div>
+          <div class="out"><span class="hlb">saudacao</span>();</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// com parâmetros</div>
+          <div class="out"><span class="hl">function</span> <span class="hlb">saudacao</span>(nome) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">`Olá, ${nome}!`</span>);</div>
+          <div class="out">}</div>
+          <div class="out"><span class="hlb">saudacao</span>(<span class="hlg">"Ana"</span>);</div>
+          <div class="res">← Olá, Ana!</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// com retorno</div>
+          <div class="out"><span class="hl">function</span> <span class="hlb">somar</span>(a, b) {</div>
+          <div class="out ind"><span class="hl">return</span> a + b;</div>
+          <div class="out">}</div>
+          <div class="out"><span class="hl">let</span> resultado = <span class="hlb">somar</span>(<span class="hlp">10</span>, <span class="hlp">5</span>);</div>
+          <div class="out"><span class="hlb">console</span>.log(resultado); <span style="color:#3d4460;font-style:italic">// 15</span></div>
+        </div>
+      </div>
+      <div class="tip"><strong>Sem return explícito</strong>, a função retorna <code>undefined</code>. Use <code>return</code> sempre que a função precisar produzir um valor.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 19 — ARROW FUNCTIONS
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 7 · Funções</div>
+  <h2 class="slide-title">Arrow functions — sintaxe moderna</h2>
+  <p class="subtitle">Introduzidas no ES6. Sintaxe mais compacta para escrever funções.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Declaração tradicional</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body">
+          <div class="out"><span class="hl">function</span> <span class="hlb">somar</span>(a, b) {</div>
+          <div class="out ind"><span class="hl">return</span> a + b;</div>
+          <div class="out">}</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">function</span> <span class="hlb">saudacao</span>(nome) {</div>
+          <div class="out ind"><span class="hl">return</span> <span class="hlg">`Olá, ${nome}!`</span>;</div>
+          <div class="out">}</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Arrow function — equivalente</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div></div>
+        <div class="terminal-body">
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// com chaves e return</div>
+          <div class="out"><span class="hl">const</span> <span class="hlb">somar</span> = (a, b) => {</div>
+          <div class="out ind"><span class="hl">return</span> a + b;</div>
+          <div class="out">};</div>
+          <div class="sp"></div>
+          <div style="color:#3d4460;font-style:italic;font-family:var(--mono);font-size:12.5px">// expressão única: sem chaves nem return</div>
+          <div class="out"><span class="hl">const</span> <span class="hlb">somar</span> = (a, b) => a + b;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">const</span> <span class="hlb">saudacao</span> = nome =></div>
+          <div class="out ind"><span class="hlg">`Olá, ${nome}!`</span>;</div>
+        </div>
+      </div>
+      <div class="info"><strong>Um parâmetro só</strong> → parênteses opcionais.<br><strong>Expressão única</strong> → sem chaves e o valor é retornado automaticamente.</div>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top:14px">
+    <strong>Recomendação pedagógica:</strong> aprenda primeiro com <code>function</code> tradicional. Use arrow functions quando se sentir confortável com os conceitos de parâmetro e retorno.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 20 — EXERCÍCIO INTEGRADOR
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Parte 8 · Exercício Integrador</div>
+  <h2 class="slide-title">Classificador de alunos</h2>
+  <p class="subtitle">Combine tudo que aprendeu: variáveis, tipos, funções e seleção.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Versão básica</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body" style="font-size:12px">
+          <div class="out"><span class="hl">function</span> <span class="hlb">calcularMedia</span>(nota1, nota2) {</div>
+          <div class="out ind"><span class="hl">return</span> (nota1 + nota2) / <span class="hlp">2</span>;</div>
+          <div class="out">}</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">const</span> nome = <span class="hlg">"Ana"</span>;</div>
+          <div class="out"><span class="hl">const</span> nota1 = <span class="hlp">8</span>;</div>
+          <div class="out"><span class="hl">const</span> nota2 = <span class="hlp">7</span>;</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">const</span> media = <span class="hlb">calcularMedia</span>(nota1, nota2);</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">if</span> (media >= <span class="hlp">6</span>) {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">`${nome} aprovado com média ${media}.`</span>);</div>
+          <div class="out">} <span class="hl">else</span> {</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">`${nome} reprovado com média ${media}.`</span>);</div>
+          <div class="out">}</div>
+          <div class="res">← Ana aprovado com média 7.5.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Versão avançada — lista de alunos</div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div><span class="path">script.js</span></div>
+        <div class="terminal-body" style="font-size:11.5px">
+          <div class="out"><span class="hl">const</span> alunos = [</div>
+          <div class="out ind">{ nome: <span class="hlg">"Ana"</span>,    nota1: <span class="hlp">8</span>, nota2: <span class="hlp">7</span> },</div>
+          <div class="out ind">{ nome: <span class="hlg">"Carlos"</span>, nota1: <span class="hlp">5</span>, nota2: <span class="hlp">6</span> },</div>
+          <div class="out ind">{ nome: <span class="hlg">"Maria"</span>,  nota1: <span class="hlp">9</span>, nota2: <span class="hlp">10</span> }</div>
+          <div class="out">];</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">function</span> <span class="hlb">calcularMedia</span>(n1, n2) {</div>
+          <div class="out ind"><span class="hl">return</span> (n1 + n2) / <span class="hlp">2</span>;</div>
+          <div class="out">}</div>
+          <div class="sp"></div>
+          <div class="out"><span class="hl">for</span> (<span class="hl">let</span> aluno <span class="hl">of</span> alunos) {</div>
+          <div class="out ind"><span class="hl">const</span> m = <span class="hlb">calcularMedia</span>(aluno.nota1, aluno.nota2);</div>
+          <div class="out ind"><span class="hl">const</span> status = m >= <span class="hlp">6</span> ? <span class="hlg">"aprovado"</span> : <span class="hlg">"reprovado"</span>;</div>
+          <div class="out ind"><span class="hlb">console</span>.log(<span class="hlg">`${aluno.nome}: ${status} (${m})`</span>);</div>
+          <div class="out">}</div>
+          <div class="res">← Ana: aprovado (7.5)</div>
+          <div class="res">← Carlos: reprovado (5.5)</div>
+          <div class="res">← Maria: aprovado (9.5)</div>
+        </div>
+      </div>
+      <div class="tip"><strong>Para avançados:</strong> <code>for...of</code> percorre arrays. <code>condição ? a : b</code> é o operador ternário — equivale a um <code>if/else</code> inline.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 21 — EXERCÍCIOS FUNÇÕES
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="exercise-wrap">
+    <div class="exercise-stripe"></div>
+    <div class="slide-tag">Exercícios · Funções</div>
+    <h2 class="slide-title">Mão na massa</h2>
+
+    <div class="cards cards-2" style="gap:12px">
+      <div class="ex-card">
+        <div class="ex-label">Teórico 1</div>
+        <p>Explique com suas palavras por que funções ajudam a organizar um programa. Cite pelo menos dois benefícios.</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Teórico 2</div>
+        <p>Qual é a diferença entre uma função que usa <code>console.log</code> internamente e uma função que usa <code>return</code>? Quando cada uma é mais útil?</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 3 — calcularMedia</div>
+        <p>Crie <code>calcularMedia(nota1, nota2)</code> que retorne a média. Depois, use a função para exibir se o aluno foi aprovado (<code>média ≥ 6</code>) ou reprovado.</p>
+      </div>
+      <div class="ex-card">
+        <div class="ex-label">Prático 4 — ehPar</div>
+        <p>Crie <code>ehPar(numero)</code> que retorne <code>true</code> se o número for par e <code>false</code> caso contrário.<br>
+        <code>ehPar(10)</code> → <em>true</em> &nbsp; <code>ehPar(7)</code> → <em>false</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 22 — FECHAMENTO
+══════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Fechamento</div>
+  <h2 class="slide-title">O que aprendemos hoje</h2>
+
+  <div class="two-col">
+    <div>
+      <ul class="steps">
+        <li><div class="step-num">✓</div><div><strong>Origem do JavaScript</strong><span>1995, Brendan Eich, Netscape. JS ≠ Java.</span></div></li>
+        <li><div class="step-num">✓</div><div><strong>Variáveis</strong><span><code>const</code> quando possível, <code>let</code> quando muda, evitar <code>var</code>.</span></div></li>
+        <li><div class="step-num">✓</div><div><strong>Tipos de dados</strong><span>number, string, boolean, undefined, null.</span></div></li>
+        <li><div class="step-num">✓</div><div><strong>Seleção</strong><span><code>if / else if / else</code> e <code>switch</code>. Prefira <code>===</code>.</span></div></li>
+        <li><div class="step-num">✓</div><div><strong>Repetição</strong><span><code>for</code> quando sabemos o número de vezes, <code>while</code> por condição.</span></div></li>
+        <li><div class="step-num">✓</div><div><strong>Funções</strong><span>Declaração, parâmetros, retorno, arrow functions.</span></div></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="section-label">Próxima aula</div>
+      <div class="cards" style="gap:9px; margin-bottom:14px">
+        <div class="card accent-amber" style="padding:12px 14px">
+          <h3>🌐 DOM — Document Object Model</h3>
+          <p>Manipular elementos HTML com JavaScript: selecionar, alterar, criar e remover nós.</p>
+        </div>
+        <div class="card accent-blue" style="padding:12px 14px">
+          <h3>🖱️ Eventos</h3>
+          <p>Responder a cliques, teclas, envios de formulário e outros eventos do usuário.</p>
+        </div>
+        <div class="card accent-green" style="padding:12px 14px">
+          <h3>📋 Formulários</h3>
+          <p>Ler campos, validar entradas e atualizar a página sem recarregar.</p>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>Ideia central da aula:</strong> JavaScript começou como uma linguagem simples para dar vida às páginas Web, mas evoluiu para uma das mais usadas do mundo. Variáveis, tipos, seleção, repetição e funções são a base para tudo que vem a seguir.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /stage -->
+
+<div class="nav">
+  <button class="nav-btn js-prev">← Anterior</button>
+  <div class="nav-dots" data-dots></div>
+  <button class="nav-btn js-next">Próximo →</button>
+</div>
+
+<script>
+const CONFIG = {
+  acronym:     'IFSC',
+  institution: 'Instituto Federal de Santa Catarina',
+  campus:      'Campus Gaspar',
+  workshop:    'JS · AULA 1',
+  headerLabel: 'javascript@aula1',
+};
+
+document.getElementById('topbar-inner').innerHTML = `
+  <div class="ifsc-brand">
+    <div class="ifsc-logo-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36">
+        <rect width="36" height="36" rx="5" fill="rgba(255,255,255,0.18)"/>
+        <text x="18" y="25" text-anchor="middle"
+          font-family="'Segoe UI',system-ui,sans-serif"
+          font-size="13" font-weight="900" fill="#fff">${CONFIG.acronym}</text>
+      </svg>
+    </div>
+    <div class="ifsc-text">
+      <div class="inst">${CONFIG.institution}</div>
+      <div class="campus">${CONFIG.campus}</div>
+    </div>
+  </div>
+  <div class="workshop-label">${CONFIG.workshop}</div>
+`;
+document.getElementById('header-label').textContent = CONFIG.headerLabel;
+
+const slides   = Array.from(document.querySelectorAll('.slide'));
+const TOTAL    = slides.length;
+let cur        = 0;
+
+const dotsEls  = document.querySelectorAll('[data-dots]');
+const prevBtns = document.querySelectorAll('.js-prev');
+const nextBtns = document.querySelectorAll('.js-next');
+
+dotsEls.forEach(dotsEl => {
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot-nav' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+});
+
+slides[0].classList.add('active');
+document.getElementById('pbar').style.width = (1 / TOTAL * 100) + '%';
+document.getElementById('counter').textContent = '1 / ' + TOTAL;
+prevBtns.forEach(btn => btn.disabled = true);
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEls.forEach(el => el.children[cur].classList.remove('active'));
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  slides[cur].classList.add('active');
+  dotsEls.forEach(el => el.children[cur].classList.add('active'));
+  document.getElementById('pbar').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + TOTAL;
+  prevBtns.forEach(btn => btn.disabled = cur === 0);
+  nextBtns.forEach(btn => btn.disabled = cur === TOTAL - 1);
+  window.scrollTo(0, 0);
+}
+
+function navigate(dir) { goTo(cur + dir); }
+prevBtns.forEach(btn => btn.addEventListener('click', () => navigate(-1)));
+nextBtns.forEach(btn => btn.addEventListener('click', () => navigate(1)));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+});
+</script>
+</body>
+</html>
