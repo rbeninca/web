@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador de Números</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label,
+        input,
+        button {
+            margin: 10px 0;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sorteador de Números</h1>
+    <form id="formulario-intervalo">
+        <label for="valor-minimo">Valor mínimo:</label>
+        <input type="number" id="valor-minimo" required>
+        <label for="valor-maximo">Valor máximo:</label>
+        <input type="number" id="valor-maximo" required>
+        <button type="button" id="botao-sortear">Sortear</button>
+        <button type="button" id="botao-limpar-sorteios">Limpar Sorteios</button>
+    </form>
+
+    <h2>Resultados</h2>
+    <ul id="lista-resultados"></ul>
+
+    <script>
+        // Classe que representa um Sorteio
+        class Sorteio {
+            constructor(valorMinimo, valorMaximo) {
+                this.valorMinimo = valorMinimo;
+                this.valorMaximo = valorMaximo;
+                this.valorSorteado = this.sortearNumero();
+            }
+
+            sortearNumero() {
+                return Math.floor(Math.random() * (this.valorMaximo - this.valorMinimo + 1)) + this.valorMinimo;
+            }
+        }
+
+        // Controlador que gerencia os sorteios  e mantemos dados  do sorteio  em memória.
+        class SorteioController {
+            constructor() {
+                this.resultados = [];
+            }
+
+            criarSorteio(valorMinimo, valorMaximo) {
+                const novoSorteio = new Sorteio(valorMinimo, valorMaximo);
+                this.resultados.push(novoSorteio);
+                return novoSorteio;
+            }
+
+            limparSorteios() {
+                this.resultados = [];
+            }
+
+            getSorteios() {
+                return this.resultados;
+            }
+        }
+
+        // Classe que gerencia a interface
+        class SorteioView {
+            constructor() {
+                this.inputMinimo = document.getElementById("valor-minimo");
+                this.inputMaximo = document.getElementById("valor-maximo");
+                this.listaResultados = document.getElementById("lista-resultados");
+                this.botaoSortear = document.getElementById("botao-sortear");
+                this.botaoLimpar = document.getElementById("botao-limpar-sorteios");
+                this.sorteioController = new SorteioController();
+
+                // Adiciona eventos aos botões
+                this.botaoSortear.addEventListener("click", () => this.novoSorteio());
+                this.botaoLimpar.addEventListener("click", () => this.limparSorteios());
+            }
+
+            novoSorteio() {
+                const valorMinimo = parseInt(this.inputMinimo.value);
+                const valorMaximo = parseInt(this.inputMaximo.value);
+
+                if (isNaN(valorMinimo) || isNaN(valorMaximo) || valorMinimo > valorMaximo) {
+                    alert("Por favor, insira valores válidos. O valor mínimo deve ser menor ou igual ao máximo.");
+                    return;
+                }
+
+                const sorteio = this.sorteioController.criarSorteio(valorMinimo, valorMaximo);
+                this.adicionaNovoSorteioLista(sorteio);
+            }
+
+            adicionaNovoSorteioLista(novoSorteio) {
+                const item = document.createElement("li");
+                item.textContent = `Número ${novoSorteio.valorSorteado} no intervalo [${novoSorteio.valorMinimo}, ${novoSorteio.valorMaximo}]`;
+                this.listaResultados.appendChild(item);
+            }
+
+            limparSorteios() {
+                this.sorteioController.limparSorteios();
+                this.listaResultados.innerHTML = ""; // Remove todos os itens da lista diretamente
+            }
+
+            atualizarLista() {
+                // Atualiza a lista de forma iterativa usando adicionaNovoSorteioLista
+                this.listaResultados.innerHTML = ""; // Limpa a lista antes de adicionar
+                const sorteios = this.sorteioController.getSorteios();
+                sorteios.forEach((sorteio) => this.adicionaNovoSorteioLista(sorteio));
+            }
+        }
+
+        // Inicialização da aplicação
+        document.addEventListener("DOMContentLoaded", () => {
+            new SorteioView();
+        });
+    </script>
+</body>
+
+</html>

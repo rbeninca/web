@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            border: 1px solid black;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100svh;
+        }
+        body, #boxClock{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #boxClock{
+
+        }
+
+    </style>
+</head>
+<body>
+    <div id="boxClock">
+        <div id="relogio">
+            
+        </div>
+    </div>
+
+    <script>
+
+        function atualizaHora(){
+            let agora = new Date();
+            let hora = agora.getHours();
+            let minuto = agora.getMinutes();
+            let segundo = agora.getSeconds();
+            let mili = agora.getMilliseconds();
+
+        	let relogio = `${hora}:${minuto}:${segundo}:${mili}`
+            document.querySelector("#relogio").innerHTML = relogio;
+        }
+
+        setInterval(atualizaHora, 1);
+        
+    </script>
+</body>
+</html>
