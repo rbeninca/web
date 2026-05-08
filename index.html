@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apresentação</title>
+<style>
+  :root {
+    --green:        #006633;
+    --green-mid:    #007a3d;
+    --green-lt:     #d6ede0;
+    --green-xlt:    #eef7f1;
+    --green-border: #b3d9c4;
+    --accent:       #f4a928;
+    --accent-lt:    #fef3dc;
+    --accent-border:#f4d080;
+    --blue:         #1a5c9e;
+    --blue-lt:      #dce9f8;
+    --coral:        #c0392b;
+    --coral-lt:     #fce8e6;
+    --purple:       #5b3a9e;
+    --purple-lt:    #ece6f8;
+    --bg:           #ffffff;
+    --bg2:          #f5f6f8;
+    --bg3:          #eef0f3;
+    --surface:      #f9fafb;
+    --border:       #e2e5ea;
+    --border2:      #d0d4db;
+    --text:         #1a1d23;
+    --muted:        #5a6070;
+    --muted2:       #8a91a0;
+    --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    --sans: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    width: 100%;
+    background: var(--green);
+    display: flex; justify-content: center;
+  }
+  .topbar-inner {
+    width: 100%; max-width: 980px;
+    padding: 10px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ifsc-brand { display: flex; align-items: center; gap: 12px; }
+  .ifsc-logo-wrap svg { display: block; }
+  .ifsc-text { color: #fff; }
+  .ifsc-text .inst   { font-size: 10px; font-weight: 400; opacity: 0.82; letter-spacing: 0.03em; line-height: 1.4; }
+  .ifsc-text .campus { font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+  .workshop-label {
+    font-family: var(--mono); font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.06em;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%; max-width: 980px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 28px 0;
+  }
+  .header-label { font-family: var(--mono); font-size: 12px; color: var(--muted2); white-space: nowrap; }
+  .header-nav   { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .progress-bar { flex: 1; min-width: 80px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s ease; }
+  .slide-counter { font-family: var(--mono); font-size: 12px; color: var(--muted2); min-width: 48px; text-align: center; }
+
+  /* ── Stage ── */
+  .stage { width: 100%; max-width: 980px; padding: 20px 28px 0; flex: 1; }
+  .slide { display: none; animation: fadeIn 0.28s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Typography ── */
+  .slide-tag {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--green); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  h1.slide-title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 10px; }
+  h2.slide-title { font-size: clamp(20px, 3vw, 32px); font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 14px; }
+  .subtitle { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 640px; margin-bottom: 24px; }
+
+  /* ── Cards ── */
+  .cards { display: grid; gap: 12px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .card h3 { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .card-icon { font-size: 20px; margin-bottom: 8px; }
+  .card.accent-green  { border-left: 3px solid var(--green); }
+  .card.accent-amber  { border-left: 3px solid var(--accent); }
+  .card.accent-blue   { border-left: 3px solid var(--blue); }
+  .card.accent-coral  { border-left: 3px solid var(--coral); }
+  .card.accent-purple { border-left: 3px solid var(--purple); }
+
+  /* ── Terminal ── */
+  .terminal { background: #1b1f2b; border: 1px solid #2d3245; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+  .terminal-bar {
+    background: #252a3a; padding: 7px 14px;
+    display: flex; align-items: center; gap: 6px;
+    border-bottom: 1px solid #2d3245;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-a { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .terminal-bar .path { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: #6b7494; }
+  .terminal-body { padding: 14px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 2; }
+  .cmd  { color: #e8eaf2; }
+  .cmd::before { content: '$ '; color: #3ecfb2; }
+  .out  { color: #6b7494; }
+  .cmt  { color: #3d4460; font-style: italic; }
+  .cmt::before { content: '# '; }
+  .hl  { color: #f4a928; }
+  .hlg { color: #6bc97a; }
+  .hlp { color: #a78bfa; }
+  .hlb { color: #5b9cf6; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin: 2px; }
+  .badge-green  { background: var(--green-lt);  color: var(--green);  border: 1px solid var(--green-border); }
+  .badge-amber  { background: var(--accent-lt); color: #8a5c00;       border: 1px solid var(--accent-border); }
+  .badge-blue   { background: var(--blue-lt);   color: var(--blue);   border: 1px solid #a8c8f0; }
+  .badge-coral  { background: var(--coral-lt);  color: var(--coral);  border: 1px solid #f0b8b3; }
+  .badge-purple { background: var(--purple-lt); color: var(--purple); border: 1px solid #c4b3ea; }
+
+  /* ── Steps ── */
+  .steps { list-style: none; }
+  .steps li { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    min-width: 26px; height: 26px;
+    background: var(--green-xlt); border: 1px solid var(--green-border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--green); flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li div { font-size: 13.5px; line-height: 1.6; }
+  .steps li div strong { color: var(--text); display: block; margin-bottom: 1px; }
+  .steps li div span  { color: var(--muted); font-size: 12.5px; }
+
+  /* ── Cover ── */
+  .cover-wrap { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 52px 48px 44px; position: relative; overflow: hidden; }
+  .cover-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--green); border-radius: 14px 0 0 14px; }
+  .cover-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+
+  /* ── Tip / Warn ── */
+  .tip  { background: var(--green-xlt); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .tip  strong { color: var(--green); }
+  .warn { background: var(--accent-lt); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .warn strong { color: #8a5c00; }
+
+  /* ── Layout helpers ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin: 16px 0 7px; }
+  code { font-family: var(--mono); font-size: 0.87em; background: var(--bg3); color: var(--green); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* ── Nav ── */
+  .nav { width: 100%; max-width: 980px; display: flex; align-items: center; justify-content: space-between; padding: 18px 28px 24px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--border2); border-radius: 8px; padding: 9px 18px;
+    color: var(--text); font-size: 13.5px; font-weight: 500;
+    cursor: pointer; transition: all 0.18s; font-family: var(--sans);
+  }
+  .nav-btn:hover { background: var(--green-xlt); border-color: var(--green-border); color: var(--green); }
+  .nav-btn:active { transform: scale(0.97); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .nav-btn.icon-only { width: 34px; height: 34px; padding: 0; justify-content: center; flex-shrink: 0; font-size: 17px; }
+  .nav-dots { display: flex; gap: 6px; }
+  .dot-nav { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: all 0.2s; }
+  .dot-nav.active { background: var(--green); transform: scale(1.35); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .cards-2, .cards-3, .two-col { grid-template-columns: 1fr; }
+    .stage, .header, .nav { padding-left: 14px; padding-right: 14px; }
+    .topbar-inner { padding: 10px 14px; }
+    .cover-wrap { padding: 36px 26px 30px; }
+    .header { flex-wrap: wrap; }
+    .header-label { width: 100%; }
+    .header .nav-dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- gerado pelo script — configure em CONFIG abaixo -->
+<div class="topbar"><div class="topbar-inner" id="topbar-inner"></div></div>
+
+<div class="header">
+  <span class="header-label" id="header-label"></span>
+  <div class="header-nav">
+    <button class="nav-btn icon-only js-prev" aria-label="Anterior" title="Anterior">‹</button>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+    <div class="slide-counter" id="counter"></div>
+    <div class="nav-dots" data-dots></div>
+    <button class="nav-btn icon-only js-next" aria-label="Próximo" title="Próximo">›</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     SLIDES
+     Para adicionar um novo slide: copie um bloco <div class="slide">
+     e cole antes de </div><!-- /stage -->.
+     Não é necessário numerar ou registrar nada — o script detecta
+     automaticamente todos os slides presentes.
+     ════════════════════════════════════════════════════════ -->
+<div class="stage">
+
+
+<!-- ── Slide: Capa ─────────────────────────────────────── -->
+<div class="slide">
+  <div class="cover-wrap">
+    <div class="cover-stripe"></div>
+    <div class="slide-tag">Oficina Prática</div>
+    <h1 class="slide-title">Título Principal<br>da Apresentação</h1>
+    <p class="subtitle">Uma descrição breve do tema e do que será abordado ao longo da apresentação.</p>
+    <div class="cover-meta">
+      <span class="badge badge-green">Tópico A</span>
+      <span class="badge badge-amber">Tópico B</span>
+      <span class="badge badge-blue">Tópico C</span>
+      <span class="badge badge-coral">Atividade Prática</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Slide: Cards 3 colunas ──────────────────────────── -->
+<div class="slide">
+  <div class="slide-tag">Motivação</div>
+  <h2 class="slide-title">Por que isso importa?</h2>
+  <p class="subtitle">Contexto breve para situar os participantes no problema ou oportunidade.</p>
+
+  <div class="cards cards-3">
+    <div class="card accent-coral">
+      <div class="card-icon">😰</div>
+      <h3>Problema 1</h3>
+      <p>Descrição do primeiro problema ou desafio que motiva o tema.</p>
+    </div>
+    <div class="card accent-amber">
+      <div class="card-icon">💥</div>
+      <h3>Problema 2</h3>
+      <p>Descrição do segundo problema ou desafio que motiva o tema.</p>
+    </div>
+    <div class="card accent-green">
+      <div class="card-icon">✅</div>
+      <h3>Solução</h3>
+      <p>O que vamos aprender a resolver ou melhorar com este conteúdo.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Slide: Dois colunas — conceito + terminal ────────── -->
+<div class="slide">
+  <div class="slide-tag">Conceito</div>
+  <h2 class="slide-title">Título do conceito</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:14px; line-height:1.75; color:var(--muted); margin-bottom:14px">
+        Parágrafo explicativo do conceito principal. Use <strong style="color:var(--text)">negrito</strong>
+        para destacar termos importantes.
+      </p>
+
+      <div class="section-label">Passos</div>
+      <ul class="steps">
+        <li><div class="step-num">1</div><div><strong>Primeiro passo</strong><span>Descrição curta do que fazer.</span></div></li>
+        <li><div class="step-num">2</div><div><strong>Segundo passo</strong><span>Descrição curta do que fazer.</span></div></li>
+        <li><div class="step-num">3</div><div><strong>Terceiro passo</strong><span>Descrição curta do que fazer.</span></div></li>
+      </ul>
+
+      <div class="tip">
+        <strong>Dica:</strong> Use <code>.tip</code> para informações úteis de apoio.
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Exemplo no terminal</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">bash</span>
+        </div>
+        <div class="terminal-body">
+          <div class="cmt">comentário explicativo</div>
+          <div class="cmd"><span class="hl">comando</span> argumento</div>
+          <div class="out">saída do comando</div>
+          <div style="height:6px"></div>
+          <div class="cmt">outro bloco</div>
+          <div class="cmd"><span class="hlb">outro-comando</span> --flag</div>
+          <div class="out" style="color:#6bc97a">sucesso!</div>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>Atenção:</strong> Use <code>.warn</code> para pontos de atenção ou alertas.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Slide: Cards com referência ─────────────────────── -->
+<div class="slide">
+  <div class="slide-tag">Referência</div>
+  <h2 class="slide-title">Resumo e próximos passos</h2>
+
+  <div class="cards cards-2" style="gap:11px; margin-bottom:14px">
+    <div class="card accent-green">
+      <div class="section-label" style="margin-top:0">Grupo A</div>
+      <div style="font-family:var(--mono); font-size:12px; line-height:2.2; color:var(--muted)">
+        <div><span style="color:var(--green)">item-1</span></div>
+        <div><span style="color:var(--green)">item-2</span></div>
+        <div><span style="color:var(--green)">item-3</span></div>
+      </div>
+    </div>
+    <div class="card accent-blue">
+      <div class="section-label" style="margin-top:0">Grupo B</div>
+      <div style="font-family:var(--mono); font-size:12px; line-height:2.2; color:var(--muted)">
+        <div><span style="color:var(--blue)">item-1</span></div>
+        <div><span style="color:var(--blue)">item-2</span></div>
+        <div><span style="color:var(--blue)">item-3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Links úteis:</strong>
+    <a href="#" target="_blank" rel="noopener">Documentação oficial</a> ·
+    <a href="#" target="_blank" rel="noopener">Repositório do projeto</a>
+  </div>
+</div>
+
+
+</div><!-- /stage -->
+
+<div class="nav">
+  <button class="nav-btn js-prev">← Anterior</button>
+  <div class="nav-dots" data-dots></div>
+  <button class="nav-btn js-next">Próximo →</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIGURAÇÃO — edite aqui
+   ═══════════════════════════════════════════ */
+const CONFIG = {
+  acronym:     'IFSC',
+  institution: 'Instituto Federal de Santa Catarina',
+  campus:      'Campus Gaspar',
+  workshop:    'OFICINA · TEMA',
+  headerLabel: 'nome@evento',
+};
+
+/* ═══════════════════════════════════════════
+   INFRAESTRUTURA — não precisa editar abaixo
+   ═══════════════════════════════════════════ */
+document.getElementById('topbar-inner').innerHTML = `
+  <div class="ifsc-brand">
+    <div class="ifsc-logo-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36">
+        <rect width="36" height="36" rx="5" fill="rgba(255,255,255,0.18)"/>
+        <text x="18" y="25" text-anchor="middle"
+          font-family="'Segoe UI',system-ui,sans-serif"
+          font-size="13" font-weight="900" fill="#fff">${CONFIG.acronym}</text>
+      </svg>
+    </div>
+    <div class="ifsc-text">
+      <div class="inst">${CONFIG.institution}</div>
+      <div class="campus">${CONFIG.campus}</div>
+    </div>
+  </div>
+  <div class="workshop-label">${CONFIG.workshop}</div>
+`;
+document.getElementById('header-label').textContent = CONFIG.headerLabel;
+
+const slides   = Array.from(document.querySelectorAll('.slide'));
+const TOTAL    = slides.length;
+let cur        = 0;
+
+const dotsEls  = document.querySelectorAll('[data-dots]');
+const prevBtns = document.querySelectorAll('.js-prev');
+const nextBtns = document.querySelectorAll('.js-next');
+
+dotsEls.forEach(dotsEl => {
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot-nav' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+});
+
+slides[0].classList.add('active');
+document.getElementById('pbar').style.width = (1 / TOTAL * 100) + '%';
+document.getElementById('counter').textContent = '1 / ' + TOTAL;
+prevBtns.forEach(btn => btn.disabled = true);
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEls.forEach(el => el.children[cur].classList.remove('active'));
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  slides[cur].classList.add('active');
+  dotsEls.forEach(el => el.children[cur].classList.add('active'));
+  document.getElementById('pbar').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + TOTAL;
+  prevBtns.forEach(btn => btn.disabled = cur === 0);
+  nextBtns.forEach(btn => btn.disabled = cur === TOTAL - 1);
+  window.scrollTo(0, 0);
+}
+
+function navigate(dir) { goTo(cur + dir); }
+prevBtns.forEach(btn => btn.addEventListener('click', () => navigate(-1)));
+nextBtns.forEach(btn => btn.addEventListener('click', () => navigate(1)));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+});
+</script>
+</body>
+</html>
