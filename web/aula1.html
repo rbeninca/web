@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programação para Internet I — Aula 1</title>
+<style>
+  :root {
+    --green:        #006633;
+    --green-mid:    #007a3d;
+    --green-lt:     #d6ede0;
+    --green-xlt:    #eef7f1;
+    --green-border: #b3d9c4;
+    --accent:       #f4a928;
+    --accent-lt:    #fef3dc;
+    --accent-border:#f4d080;
+    --blue:         #1a5c9e;
+    --blue-mid:     #1e6fbe;
+    --blue-lt:      #dce9f8;
+    --blue-xlt:     #eef5fd;
+    --blue-border:  #a8c8f0;
+    --coral:        #c0392b;
+    --coral-lt:     #fce8e6;
+    --purple:       #5b3a9e;
+    --purple-lt:    #ece6f8;
+    --bg:           #ffffff;
+    --bg2:          #f5f6f8;
+    --bg3:          #eef0f3;
+    --surface:      #f9fafb;
+    --border:       #e2e5ea;
+    --border2:      #d0d4db;
+    --text:         #1a1d23;
+    --muted:        #5a6070;
+    --muted2:       #8a91a0;
+    --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    --sans: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  /* ── Top bar ── */
+  .topbar { width: 100%; background: var(--green); display: flex; justify-content: center; }
+  .topbar-inner {
+    width: 100%; max-width: 980px;
+    padding: 10px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ifsc-brand { display: flex; align-items: center; gap: 12px; }
+  .ifsc-logo-wrap svg { display: block; }
+  .ifsc-text { color: #fff; }
+  .ifsc-text .inst   { font-size: 10px; font-weight: 400; opacity: 0.82; letter-spacing: 0.03em; line-height: 1.4; }
+  .ifsc-text .campus { font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+  .workshop-label {
+    font-family: var(--mono); font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.06em;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%; max-width: 980px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 28px 0;
+  }
+  .header-label { font-family: var(--mono); font-size: 12px; color: var(--muted2); white-space: nowrap; }
+  .header-nav   { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .progress-bar { flex: 1; min-width: 80px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.4s ease; }
+  .slide-counter { font-family: var(--mono); font-size: 12px; color: var(--muted2); min-width: 48px; text-align: center; }
+
+  /* ── Stage ── */
+  .stage { width: 100%; max-width: 980px; padding: 20px 28px 0; flex: 1; }
+  .slide { display: none; animation: fadeIn 0.28s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Typography ── */
+  .slide-tag {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--blue); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  h1.slide-title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 10px; }
+  h2.slide-title { font-size: clamp(20px, 3vw, 32px); font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 14px; }
+  .subtitle { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 640px; margin-bottom: 20px; }
+
+  /* ── Cards ── */
+  .cards { display: grid; gap: 12px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .card h3 { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .card-icon { font-size: 20px; margin-bottom: 8px; }
+  .card.accent-green  { border-left: 3px solid var(--green); }
+  .card.accent-amber  { border-left: 3px solid var(--accent); }
+  .card.accent-blue   { border-left: 3px solid var(--blue); }
+  .card.accent-coral  { border-left: 3px solid var(--coral); }
+  .card.accent-purple { border-left: 3px solid var(--purple); }
+
+  /* ── Terminal ── */
+  .terminal { background: #1b1f2b; border: 1px solid #2d3245; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+  .terminal-bar {
+    background: #252a3a; padding: 7px 14px;
+    display: flex; align-items: center; gap: 6px;
+    border-bottom: 1px solid #2d3245;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-a { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .terminal-bar .path { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: #6b7494; }
+  .terminal-body { padding: 14px 18px; font-family: var(--mono); font-size: 12.5px; line-height: 2; }
+  .cmd  { color: #e8eaf2; }
+  .cmd::before { content: '$ '; color: #3ecfb2; }
+  .out  { color: #6b7494; }
+  .cmt  { color: #3d4460; font-style: italic; }
+  .cmt::before { content: '# '; }
+  .hl  { color: #f4a928; }
+  .hlg { color: #6bc97a; }
+  .hlp { color: #a78bfa; }
+  .hlb { color: #5b9cf6; }
+  .hlr { color: #ff7b7b; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin: 2px; }
+  .badge-green  { background: var(--green-lt);  color: var(--green);  border: 1px solid var(--green-border); }
+  .badge-amber  { background: var(--accent-lt); color: #8a5c00;       border: 1px solid var(--accent-border); }
+  .badge-blue   { background: var(--blue-lt);   color: var(--blue);   border: 1px solid var(--blue-border); }
+  .badge-coral  { background: var(--coral-lt);  color: var(--coral);  border: 1px solid #f0b8b3; }
+  .badge-purple { background: var(--purple-lt); color: var(--purple); border: 1px solid #c4b3ea; }
+
+  /* ── Steps ── */
+  .steps { list-style: none; }
+  .steps li { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    min-width: 26px; height: 26px;
+    background: var(--blue-xlt); border: 1px solid var(--blue-border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--blue); flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li div { font-size: 13.5px; line-height: 1.6; }
+  .steps li div strong { color: var(--text); display: block; margin-bottom: 1px; }
+  .steps li div span  { color: var(--muted); font-size: 12.5px; }
+
+  /* ── Cover ── */
+  .cover-wrap { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 52px 48px 44px; position: relative; overflow: hidden; }
+  .cover-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--blue); border-radius: 14px 0 0 14px; }
+  .cover-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+
+  /* ── Tip / Warn ── */
+  .tip  { background: var(--blue-xlt); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .tip  strong { color: var(--blue); }
+  .tip  a { color: var(--blue); }
+  .warn { background: var(--accent-lt); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .warn strong { color: #8a5c00; }
+  .info { background: var(--green-xlt); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--muted); line-height: 1.6; margin: 12px 0; }
+  .info strong { color: var(--green); }
+
+  /* ── Layout helpers ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin: 16px 0 7px; }
+  code { font-family: var(--mono); font-size: 0.87em; background: var(--bg3); color: var(--blue); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  a { color: var(--blue); }
+
+  /* ── Nav ── */
+  .nav { width: 100%; max-width: 980px; display: flex; align-items: center; justify-content: space-between; padding: 18px 28px 24px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--border2); border-radius: 8px; padding: 9px 18px;
+    color: var(--text); font-size: 13.5px; font-weight: 500;
+    cursor: pointer; transition: all 0.18s; font-family: var(--sans);
+  }
+  .nav-btn:hover { background: var(--blue-xlt); border-color: var(--blue-border); color: var(--blue); }
+  .nav-btn:active { transform: scale(0.97); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .nav-btn.icon-only { width: 34px; height: 34px; padding: 0; justify-content: center; flex-shrink: 0; font-size: 17px; }
+  .nav-dots { display: flex; gap: 6px; }
+  .dot-nav { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: all 0.2s; }
+  .dot-nav.active { background: var(--blue); transform: scale(1.35); }
+
+  /* ══════════════════════════════════════════════
+     NOVOS ESTILOS — específicos desta aula
+     ══════════════════════════════════════════════ */
+
+  /* ── Stagger entrance ── */
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .anim-card { opacity: 0; }
+  .slide.active .anim-card { animation: slideInUp 0.42s ease forwards; }
+
+  /* ── City analogy cards ── */
+  .city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 12px; }
+  .city-card {
+    border-radius: 12px; padding: 20px 16px; text-align: center;
+    border: 1px solid var(--border); background: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .city-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+  .city-icon { font-size: 34px; margin-bottom: 10px; }
+  .city-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .city-kind  { font-size: 11px; font-weight: 600; color: var(--muted2); margin-bottom: 8px; }
+  .city-desc  { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .city-card.internet { border-top: 3px solid var(--green); }
+  .city-card.web      { border-top: 3px solid var(--blue); }
+  .city-card.services { border-top: 3px solid var(--accent); }
+
+  /* ── Flow diagram (cliente-servidor) ── */
+  .flow-diagram {
+    display: flex; align-items: center; justify-content: center;
+    padding: 18px 24px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; margin: 14px 0; gap: 0;
+  }
+  .flow-actor { text-align: center; min-width: 100px; }
+  .flow-actor-icon { font-size: 30px; line-height: 1; }
+  .flow-actor-name { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+  .flow-mid { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 0 12px; }
+  .flow-arrow-wrap { display: flex; align-items: center; gap: 6px; }
+  .flow-line { flex: 1; height: 2px; }
+  .flow-line.req  { background: var(--blue); }
+  .flow-line.res  { background: var(--green); }
+  .flow-label { font-family: var(--mono); font-size: 10px; white-space: nowrap; font-weight: 600; }
+  .flow-label.req { color: var(--blue); }
+  .flow-label.res { color: var(--green); }
+
+  /* ── HTTP Dinner actor bar ── */
+  .actors-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .actor-pill {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--muted2); padding: 4px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: #fff;
+    transition: all 0.3s ease;
+  }
+  .actor-pill.lit {
+    color: var(--blue); background: var(--blue-lt); border-color: var(--blue-border);
+    box-shadow: 0 0 0 2px rgba(26,92,158,0.15);
+  }
+  .actor-sep { color: var(--border2); font-size: 16px; }
+
+  /* ── HTTP reveal steps ── */
+  .reveal-area {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .http-reveal-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 11px 14px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+  .http-reveal-step.shown { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .http-step-num {
+    min-width: 26px; height: 26px;
+    background: var(--blue-lt); border: 1px solid var(--blue-border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--blue); flex-shrink: 0; margin-top: 1px;
+  }
+  .http-step-content { font-size: 13px; line-height: 1.5; }
+  .http-step-content strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .http-step-content span   { color: var(--muted); font-size: 12.5px; }
+
+  /* ── Demo buttons ── */
+  .demo-btn-wrap { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .demo-btn {
+    background: var(--blue); color: #fff; border: none; border-radius: 8px;
+    padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.18s; font-family: var(--sans);
+  }
+  .demo-btn:hover  { background: var(--blue-mid); }
+  .demo-btn:active { transform: scale(0.97); }
+  .demo-btn:disabled { background: var(--border2); color: var(--muted2); cursor: not-allowed; transform: none; }
+  .demo-step-counter { font-family: var(--mono); font-size: 12px; color: var(--muted2); }
+
+  /* ── Envelope HTTP ── */
+  .envelope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+  .envelope-box { border-radius: 10px; padding: 16px; }
+  .envelope-out { background: var(--blue-lt);  border: 2px solid var(--blue); }
+  .envelope-in  { background: var(--green-xlt); border: 2px solid var(--green); }
+  .env-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .env-title.blue  { color: var(--blue); }
+  .env-title.green { color: var(--green); }
+  .env-row { font-family: var(--mono); font-size: 12px; line-height: 2; display: flex; gap: 8px; }
+  .env-key { color: var(--muted2); }
+  .env-val { color: var(--text); font-weight: 600; }
+
+  /* ── Status codes ── */
+  .status-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; margin-bottom: 12px; }
+  .status-card {
+    border-radius: 10px; padding: 14px 8px; text-align: center;
+    border: 1px solid var(--border); background: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .status-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .status-code { font-family: var(--mono); font-size: 22px; font-weight: 900; display: block; margin-bottom: 4px; }
+  .status-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 8px; }
+  .status-quote { font-size: 11px; color: var(--muted2); line-height: 1.4; font-style: italic; }
+  .s200 .status-code { color: var(--green); }
+  .s301 .status-code { color: var(--blue); }
+  .s401 .status-code { color: #8a5c00; }
+  .s404 .status-code { color: var(--coral); }
+  .s500 .status-code { color: var(--purple); }
+
+  /* ── Tag anatomy ── */
+  .tag-anatomy { display: flex; align-items: flex-start; gap: 6px; justify-content: center; margin: 20px 0 24px; flex-wrap: wrap; }
+  .tag-group { text-align: center; }
+  .tag-part { font-family: var(--mono); font-size: 16px; padding: 9px 16px; border-radius: 8px; font-weight: 700; display: block; }
+  .tag-open    { background: var(--blue-lt);  color: var(--blue);   border: 1px solid var(--blue-border); }
+  .tag-content { background: var(--accent-lt); color: #8a5c00;      border: 1px solid var(--accent-border); }
+  .tag-close   { background: var(--coral-lt); color: var(--coral);  border: 1px solid #f0b8b3; }
+  .tag-label { font-size: 10px; color: var(--muted2); margin-top: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── DOM tree ── */
+  .dom-tree-wrap {
+    font-family: var(--mono); font-size: 12px;
+    background: #1b1f2b; border-radius: 10px; border: 1px solid #2d3245;
+    padding: 16px 20px; line-height: 2;
+  }
+  .dom-tag   { color: #5b9cf6; }
+  .dom-attr  { color: #f4a928; font-style: italic; }
+  .dom-text  { color: #6bc97a; }
+  .dom-root  { color: #3ecfb2; font-weight: 700; }
+  @keyframes domIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+  .dom-line { opacity: 0; }
+  .slide.active .dom-line { animation: domIn 0.3s ease forwards; }
+
+  /* ── HTML + CSS + JS trio ── */
+  .trio-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 14px 0; }
+  .trio-card {
+    border-radius: 12px; padding: 22px 16px; text-align: center;
+    border: 1px solid var(--border); background: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .trio-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .trio-emoji { font-size: 38px; margin-bottom: 12px; display: block; }
+  .trio-lang  { font-family: var(--mono); font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .trio-role  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted2); margin-bottom: 10px; }
+  .trio-desc  { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  .trio-html  { border-top: 3px solid var(--coral);  } .trio-html  .trio-lang { color: var(--coral);  }
+  .trio-css   { border-top: 3px solid var(--blue);   } .trio-css   .trio-lang { color: var(--blue);   }
+  .trio-js    { border-top: 3px solid var(--accent); } .trio-js    .trio-lang { color: #8a5c00;        }
+
+  /* ── Exercise wrap ── */
+  .exercise-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
+  .exercise-stripe {
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 12px, transparent 12px, transparent 20px);
+  }
+  .ex-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .ex-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .ex-card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .ex-card ul { font-size: 12.5px; color: var(--muted); line-height: 1.8; padding-left: 18px; margin-top: 6px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .cards-2, .cards-3, .two-col, .city-grid, .trio-grid, .status-grid, .envelope-grid { grid-template-columns: 1fr; }
+    .status-grid { grid-template-columns: repeat(3, 1fr); }
+    .stage, .header, .nav { padding-left: 14px; padding-right: 14px; }
+    .topbar-inner { padding: 10px 14px; }
+    .cover-wrap { padding: 36px 26px 30px; }
+    .header { flex-wrap: wrap; }
+    .header-label { width: 100%; }
+    .header .nav-dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-inner" id="topbar-inner"></div></div>
+
+<div class="header">
+  <span class="header-label" id="header-label"></span>
+  <div class="header-nav">
+    <button class="nav-btn icon-only js-prev" aria-label="Anterior" title="Anterior">‹</button>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+    <div class="slide-counter" id="counter"></div>
+    <div class="nav-dots" data-dots></div>
+    <button class="nav-btn icon-only js-next" aria-label="Próximo" title="Próximo">›</button>
+  </div>
+</div>
+
+<div class="stage">
+
+
+<!-- ══ Slide 1: Capa ════════════════════════════════════════ -->
+<div class="slide">
+  <div class="cover-wrap">
+    <div class="cover-stripe"></div>
+    <div class="slide-tag">Programação Para Internet · Aula 1</div>
+    <h1 class="slide-title">Web</h1>
+    <p class="subtitle">De uma URL digitada a uma página na tela: entenda Internet, HTTP, HTML e DOM de um jeito que você nunca vai esquecer.</p>
+    <div class="cover-meta">
+      <span class="badge badge-green">Internet &amp; Web</span>
+      <span class="badge badge-blue">HTTP &amp; DNS</span>
+      <span class="badge badge-coral">HTML</span>
+      <span class="badge badge-purple">DOM</span>
+      <span class="badge badge-amber">DevTools</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 2: Objetivos ════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Roteiro da Aula</div>
+  <h2 class="slide-title">O que vamos aprender hoje</h2>
+
+  <ul class="steps">
+    <li>
+      <div class="step-num">1</div>
+      <div><strong>Internet vs Web</strong><span>Por que não são a mesma coisa — e qual a diferença real.</span></div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div><strong>Cliente e Servidor</strong><span>Como o navegador "conversa" com o servidor.</span></div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div><strong>Protocolo HTTP</strong><span>O idioma que eles falam: pedidos, respostas e erros.</span></div>
+    </li>
+    <li>
+      <div class="step-num">4</div>
+      <div><strong>HTML: a linguagem da Web</strong><span>Tags, estrutura semântica e como texto vira página.</span></div>
+    </li>
+    <li>
+      <div class="step-num">5</div>
+      <div><strong>O DOM</strong><span>Como o navegador transforma HTML em uma árvore de objetos.</span></div>
+    </li>
+    <li>
+      <div class="step-num">6</div>
+      <div><strong>DevTools + Exercício Prático</strong><span>Ferramentas reais e mão na massa.</span></div>
+    </li>
+  </ul>
+</div>
+
+
+<!-- ══ Slide 3: Inspecionando o Código-Fonte ══════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Abertura · Atividade</div>
+  <h2 class="slide-title">Inspecionando o Código-Fonte</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:14px;line-height:1.75;color:var(--muted);margin-bottom:14px">
+        Abra qualquer site — <strong style="color:var(--text)">Google, G1, YouTube</strong> — e execute o seguinte procedimento:
+      </p>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div><strong>Botão direito na página</strong><span>Selecione "Exibir código-fonte da página".</span></div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div><strong>Observe o código HTML retornado</strong><span>O navegador exibe os bytes recebidos do servidor antes de qualquer processamento.</span></div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div><strong>A questão central</strong><span>Como o navegador transforma esse texto em uma interface visual interativa?</span></div>
+        </li>
+      </ul>
+      <div class="tip"><strong>Objetivo da aula:</strong> entender o ciclo completo — da requisição HTTP ao código HTML renderizado pelo navegador.</div>
+    </div>
+
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">view-source:google.com</span>
+        </div>
+        <div class="terminal-body" style="line-height:1.8;font-size:12px">
+          <div class="out">&lt;!doctype <span class="hlb">html</span>&gt;&lt;<span class="hlb">html</span> itemscope…</div>
+          <div class="out">&lt;<span class="hlb">head</span>&gt;&lt;<span class="hlb">meta</span> <span class="hl">charset</span>=<span class="hlg">"UTF-8"</span>&gt;</div>
+          <div class="out">&lt;<span class="hlb">title</span>&gt;Google&lt;/<span class="hlb">title</span>&gt;</div>
+          <div class="out">&lt;<span class="hlb">script</span> <span class="hl">nonce</span>=<span class="hlg">"xKp…"</span>&gt;</div>
+          <div class="out" style="color:#3ecfb2">window.google = &#123; kEI: '…' &#125;;</div>
+          <div class="out">&lt;/<span class="hlb">script</span>&gt;&lt;<span class="hlb">style</span>&gt;</div>
+          <div class="out" style="opacity:0.4">… 1.200 linhas depois …</div>
+        </div>
+      </div>
+      <div class="warn"><strong>Parece caótico</strong> — mas há ordem nesse caos. É exatamente isso que aprendemos hoje.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 4: Internet vs Web ══════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Conceito · Fundamentos</div>
+  <h2 class="slide-title">Internet vs Web</h2>
+  <p class="subtitle">São camadas distintas. Internet é a infraestrutura de rede; Web é um serviço de aplicação que opera sobre ela.</p>
+
+  <div class="city-grid">
+    <div class="city-card internet anim-card">
+      <div class="city-icon">🌐</div>
+      <div class="city-label" style="color:var(--green)">Internet</div>
+      <div class="city-kind">Camada de rede</div>
+      <div class="city-desc">Infraestrutura física: cabos de fibra ótica, roteadores, switches e endereços IP. Tecnologias: TCP/IP, Ethernet, Wi-Fi.</div>
+    </div>
+    <div class="city-card web anim-card">
+      <div class="city-icon">🌍</div>
+      <div class="city-label" style="color:var(--blue)">Web</div>
+      <div class="city-kind">Camada de aplicação</div>
+      <div class="city-desc">Serviço que opera sobre a internet usando o protocolo HTTP. Sites, APIs e aplicações web são recursos da Web.</div>
+    </div>
+    <div class="city-card services anim-card">
+      <div class="city-icon">📡</div>
+      <div class="city-label" style="color:#8a5c00">Outros Protocolos</div>
+      <div class="city-kind">Mesma rede, protocolos distintos</div>
+      <div class="city-desc">E-mail (SMTP/IMAP), mensagens (XMPP), transferência de arquivos (FTP) — operam na mesma infraestrutura, mas não usam HTTP.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Referência:</strong> <a href="https://www.submarinecablemap.com" target="_blank" rel="noopener">submarinecablemap.com</a> — mapa interativo dos cabos submarinos de fibra ótica que formam a espinha dorsal da internet.
+  </div>
+</div>
+
+
+<!-- ══ Slide 5: Cliente e Servidor ═══════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Arquitetura · Cliente-Servidor</div>
+  <h2 class="slide-title">Cliente e Servidor</h2>
+  <p class="subtitle">Toda comunicação na Web segue esse padrão simples: alguém <strong>pede</strong> e alguém <strong>responde</strong>.</p>
+
+
+    <div>
+      <!-- Início da Animação Cliente-Servidor -->
+<div id="wa-root-container" class="wa-main-wrapper">
+    <style>
+        .wa-main-wrapper {
+            --wa-blue: #2563eb;
+            --wa-green: #059669;
+            --wa-amber: #d97706;
+            --wa-slate: #1e293b;
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            color: #334155;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .wa-stage {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 250px;
+            background: #f8fafc;
+            border-radius: 8px;
+            position: relative;
+            padding: 0 50px;
+            overflow: hidden;
+            border: 1px inset #f1f5f9;
+        }
+
+        /* Elementos Visuais */
+        .wa-entity { text-align: center; z-index: 10; flex: 0 0 120px; }
+        
+        .wa-browser {
+            width: 100px;
+            height: 80px;
+            border: 3px solid #cbd5e1;
+            border-top: 18px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            position: relative;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: all 0.3s;
+        }
+
+        .wa-server {
+            width: 80px;
+            height: 100px;
+            background: #334155;
+            border-radius: 6px;
+            margin: 0 auto 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 8px 0;
+        }
+
+        .wa-led { width: 70%; height: 5px; background: #475569; margin: 0 auto; border-radius: 2px; }
+        .wa-led.active { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+        /* Pacote de Dados */
+        .wa-packet {
+            position: absolute;
+            top: 50%;
+            left: 150px;
+            transform: translateY(-50%);
+            padding: 6px 12px;
+            background: var(--wa-amber);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+
+        /* Console e Botões */
+        .wa-console {
+            background: var(--wa-slate);
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 60px;
+            font-size: 14px;
+            line-height: 1.4;
+            border-left: 5px solid var(--wa-blue);
+        }
+
+        .wa-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .wa-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .wa-btn-next { background: var(--wa-blue); color: white; }
+        .wa-btn-next:hover { background: #1d4ed8; }
+        .wa-btn-next:disabled { background: #94a3b8; cursor: not-allowed; }
+        
+        .wa-btn-reset { background: #e2e8f0; color: #475569; }
+
+        /* Animações */
+        @keyframes wa-to-server { from { left: 150px; } to { left: calc(100% - 230px); } }
+        @keyframes wa-to-client { from { left: calc(100% - 230px); } to { left: 150px; } }
+    </style>
+
+    <div class="wa-stage">
+        <div class="wa-entity">
+            <div id="wa-browser-box" class="wa-browser">
+                <div id="wa-display">...</div>
+            </div>
+            <strong>💻 Cliente</strong>
+        </div>
+
+        <div id="wa-packet" class="wa-packet">GET /index.html</div>
+
+        <div class="wa-entity">
+            <div class="wa-server">
+                <div class="wa-led"></div>
+                <div class="wa-led"></div>
+                <div class="wa-led"></div>
+            </div>
+            <strong>🖥️ Servidor</strong>
+        </div>
+    </div>
+
+    <div id="wa-console-msg" class="wa-console">
+        Pressione "Próximo Passo" para iniciar a comunicação.
+    </div>
+
+    <div class="wa-controls">
+        <button id="wa-next-btn" class="wa-btn wa-btn-next">Próximo Passo</button>
+        <button id="wa-reset-btn" class="wa-btn wa-btn-reset">Reiniciar</button>
+    </div>
+
+    <script>
+        (function() {
+            const root = document.getElementById('wa-root-container');
+            const packet = root.querySelector('#wa-packet');
+            const consoleMsg = root.querySelector('#wa-console-msg');
+            const display = root.querySelector('#wa-display');
+            const browserBox = root.querySelector('#wa-browser-box');
+            const nextBtn = root.querySelector('#wa-next-btn');
+            const resetBtn = root.querySelector('#wa-reset-btn');
+            const leds = root.querySelectorAll('.wa-led');
+            
+            let currentStep = 0;
+
+            const steps = [
+                {
+                    msg: "> Navegador gera uma Requisição HTTP.<br><strong>Método: GET | Recurso: /index.html</strong>",
+                    run: () => {
+                        packet.style.display = 'block';
+                        packet.innerText = 'GET /index.html';
+                        packet.style.background = '#d97706';
+                    }
+                },
+                {
+                    msg: "> Enviando pacote via Internet para o IP do servidor...",
+                    run: () => {
+                        packet.style.animation = "wa-to-server 1.2s forwards linear";
+                        nextBtn.disabled = true;
+                        setTimeout(() => { nextBtn.disabled = false; }, 1200);
+                    }
+                },
+                {
+                    msg: "> Servidor recebeu o pedido e está processando o arquivo HTML...",
+                    run: () => {
+                        packet.style.display = 'none';
+                        leds.forEach((l, i) => setTimeout(() => l.classList.add('active'), i * 150));
+                    }
+                },
+                {
+                    msg: "> Servidor envia a Resposta HTTP.<br><strong>Status: 200 OK | Conteúdo: HTML</strong>",
+                    run: () => {
+                        packet.innerText = '200 OK (HTML)';
+                        packet.style.background = '#059669';
+                        packet.style.display = 'block';
+                        packet.style.animation = "wa-to-client 1.2s forwards linear";
+                        nextBtn.disabled = true;
+                        setTimeout(() => { nextBtn.disabled = false; }, 1200);
+                    }
+                },
+                {
+                    msg: "> Navegador recebe o HTML e inicia a <strong>Renderização</strong> da página.",
+                    run: () => {
+                        packet.style.display = 'none';
+                        browserBox.style.borderColor = '#2563eb';
+                        display.innerHTML = '<div style="color:#2563eb; font-weight:bold">Meu Site</div><div style="font-size:8px">Página carregada!</div>';
+                        nextBtn.innerText = "Fim!";
+                        nextBtn.disabled = true;
+                    }
+                }
+            ];
+
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < steps.length) {
+                    steps[currentStep].run();
+                    consoleMsg.innerHTML = steps[currentStep].msg;
+                    currentStep++;
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                currentStep = 0;
+                packet.style.display = 'none';
+                packet.style.animation = 'none';
+                packet.style.left = '150px';
+                consoleMsg.innerHTML = 'Pressione "Próximo Passo" para iniciar a comunicação.';
+                display.innerHTML = '...';
+                browserBox.style.borderColor = '#cbd5e1';
+                leds.forEach(l => l.classList.remove('active'));
+                nextBtn.disabled = false;
+                nextBtn.innerText = "Próximo Passo";
+            });
+        })();
+    </script>
+</div>
+<!-- Fim da Animação -->
+    </div>
+  </div>
+
+  <div class="cards cards-2">
+    <div class="card accent-blue anim-card">
+      <div class="card-icon">💻</div>
+      <h3>Cliente (Navegador)</h3>
+      <p>Chrome, Firefox, Safari. Faz <strong>requisições</strong> (requests) quando você digita uma URL ou clica em um link. Interpreta e renderiza a resposta.</p>
+    </div>
+    <div class="card accent-green anim-card">
+      <div class="card-icon">🖥️</div>
+      <h3>Servidor (Web Server)</h3>
+      <p>Apache, Nginx, Node.js. Fica escutando requisições, processa e envia de volta a <strong>resposta</strong> (response) — geralmente um arquivo HTML.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 6: Ciclo de Requisição HTTP (Interativo) ════════ -->
+<div class="slide" data-interactive="http-dinner">
+  <div class="slide-tag">Protocolo · HTTP</div>
+  <h2 class="slide-title">Ciclo de Requisição HTTP</h2>
+  <p class="subtitle" style="margin-bottom:10px">Clique em <strong>Próximo passo</strong> para ver o ciclo completo de uma requisição.</p>
+
+  <div class="actors-bar">
+    <div class="actor-pill" id="ap-client">💻 Navegador</div>
+    <div class="actor-sep">↔</div>
+    <div class="actor-pill" id="ap-dns">📋 DNS</div>
+    <div class="actor-sep">↔</div>
+    <div class="actor-pill" id="ap-server">🖥️ Servidor</div>
+    <div style="flex:1"></div>
+    <span class="badge badge-blue" style="font-size:10px">GET /</span>
+  </div>
+
+  <div class="reveal-area">
+    <div class="http-reveal-step">
+      <div class="http-step-num">1</div>
+      <div class="http-step-content">
+        <strong>Você digita <code>google.com</code> e pressiona Enter</strong>
+        <span>O navegador monta uma mensagem de requisição <span class="badge badge-blue">GET /</span> com cabeçalhos que identificam o cliente, o host desejado e as preferências de conteúdo.</span>
+      </div>
+    </div>
+    <div class="http-reveal-step">
+      <div class="http-step-num">2</div>
+      <div class="http-step-content">
+        <strong>Resolução DNS 📋</strong>
+        <span>O navegador ainda não sabe o endereço IP do servidor. Envia uma consulta ao servidor DNS, que retorna o IP correspondente: <code>google.com → 142.250.79.46</code>.</span>
+      </div>
+    </div>
+    <div class="http-reveal-step">
+      <div class="http-step-num">3</div>
+      <div class="http-step-content">
+        <strong>Requisição enviada ao servidor 📨</strong>
+        <span>Com o IP em mãos, o navegador estabelece uma conexão TCP e transmite a requisição HTTP: método, URL, versão do protocolo, cabeçalhos (<em>headers</em>) e, se houver, o corpo (<em>body</em>).</span>
+      </div>
+    </div>
+    <div class="http-reveal-step">
+      <div class="http-step-num">4</div>
+      <div class="http-step-content">
+        <strong>Servidor processa e responde 🖥️</strong>
+        <span>O servidor localiza o recurso solicitado e envia a resposta: <span class="badge badge-green">200 OK</span> com o conteúdo (HTML, CSS, JS). Se o recurso não existir, retorna <span class="badge badge-coral">404 Not Found</span>.</span>
+      </div>
+    </div>
+    <div class="http-reveal-step">
+      <div class="http-step-num">5</div>
+      <div class="http-step-content">
+        <strong>Navegador renderiza a página 🎨</strong>
+        <span>O navegador recebe o HTML e inicia a construção do DOM. À medida que encontra referências a CSS, JS e imagens, faz novas requisições para cada recurso e monta a página progressivamente.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-btn-wrap">
+    <button class="demo-btn js-http-prev" disabled>← Anterior</button>
+    <span class="demo-step-counter http-step-counter">Passo 0 de 5</span>
+    <button class="demo-btn js-http-next">Próximo passo →</button>
+  </div>
+</div>
+
+
+<!-- ══ Slide 7: Headers e Body ════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">HTTP · Estrutura da Mensagem</div>
+  <h2 class="slide-title">Headers e Body</h2>
+  <p class="subtitle">Toda mensagem HTTP é composta por <strong>cabeçalhos</strong> (metadados da requisição) e um <strong>corpo</strong> (dados transmitidos, quando existentes).</p>
+
+  <div class="envelope-grid">
+    <div class="envelope-box envelope-out anim-card">
+      <div class="env-title blue">Headers — Cabeçalhos</div>
+      <div class="env-row"><span class="env-key">Method:</span><span class="env-val">POST</span></div>
+      <div class="env-row"><span class="env-key">URL:</span><span class="env-val">/login</span></div>
+      <div class="env-row"><span class="env-key">Host:</span><span class="env-val">site.com</span></div>
+      <div class="env-row"><span class="env-key">Content-Type:</span><span class="env-val">application/json</span></div>
+      <div class="env-row"><span class="env-key">Cookie:</span><span class="env-val">sessid=abc123</span></div>
+    </div>
+    <div class="envelope-box envelope-in anim-card">
+      <div class="env-title green">Body — Corpo da Requisição</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.9">
+        <div>&#123;</div>
+        <div style="padding-left:16px"><span style="color:var(--blue)">"email"</span>: <span style="color:#6bc97a">"aluno@ifsc.edu.br"</span>,</div>
+        <div style="padding-left:16px"><span style="color:var(--blue)">"senha"</span>: <span style="color:#6bc97a">"minha_senha_123"</span></div>
+        <div>&#125;</div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted2);line-height:1.5">No <strong>GET</strong> o body é vazio — apenas cabeçalhos.<br>No <strong>POST</strong> o body carrega os dados da operação.</div>
+    </div>
+  </div>
+
+  <div class="cards cards-2">
+    <div class="card accent-blue anim-card">
+      <h3>GET — Recuperar recurso</h3>
+      <p>Body ausente. Solicita um recurso identificado pela URL. Ex: carregar uma página, buscar dados de uma API.</p>
+    </div>
+    <div class="card accent-coral anim-card">
+      <h3>POST — Submeter dados</h3>
+      <p>Body com payload. Envia dados ao servidor para processamento. Ex: autenticação, envio de formulário, upload de arquivo.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 8: DNS ═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">DNS · Resolução de Nomes</div>
+  <h2 class="slide-title">DNS — Resolução de Nomes de Domínio</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:14px;line-height:1.75;color:var(--muted);margin-bottom:14px">
+        Redes TCP/IP usam <strong style="color:var(--text)">endereços IP</strong> para identificar hosts. O DNS (<em>Domain Name System</em>) mapeia nomes de domínio legíveis para endereços IP numéricos.
+      </p>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div><strong>Cliente solicita <code>ifsc.edu.br</code></strong><span>Nome de domínio configurado na requisição do navegador.</span></div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div><strong>Consulta ao servidor DNS</strong><span>O resolver local consulta os servidores DNS e obtém o registro A com o endereço IP.</span></div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div><strong>Navegador usa o IP retornado</strong><span>Estabelece a conexão TCP com o servidor no endereço resolvido.</span></div>
+        </li>
+      </ul>
+      <div class="info"><strong>Registro A:</strong> associa um nome de domínio a um endereço IPv4. O registro <strong>AAAA</strong> faz o mesmo para IPv6.</div>
+    </div>
+
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">Terminal / cmd</span>
+        </div>
+        <div class="terminal-body">
+          <div class="cmt">consultar o DNS manualmente</div>
+          <div class="cmd"><span class="hl">nslookup</span> ifsc.edu.br</div>
+          <div class="out">Server:  8.8.8.8</div>
+          <div class="out">Address: 8.8.8.8#53</div>
+          <div class="out" style="height:4px"></div>
+          <div class="out">Name:    ifsc.edu.br</div>
+          <div class="out">Address: <span class="hlg">200.135.40.6</span></div>
+        </div>
+      </div>
+      <div class="tip"><strong>Tente você!</strong> Abra o terminal e rode <code>nslookup google.com</code> para ver o IP real do Google.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 9: Códigos de Status HTTP ═══════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">HTTP · Status Codes</div>
+  <h2 class="slide-title">Códigos de Status HTTP</h2>
+  <p class="subtitle">Toda resposta HTTP inclui um <strong>código de status</strong> — um número de três dígitos que indica o resultado da operação no servidor.</p>
+
+  <div class="status-grid">
+    <div class="status-card s200 anim-card">
+      <span class="status-code">200</span>
+      <div class="status-name">OK</div>
+      <div class="status-quote">Requisição processada com sucesso. O recurso solicitado foi retornado.</div>
+    </div>
+    <div class="status-card s301 anim-card">
+      <span class="status-code">301</span>
+      <div class="status-name">Moved Permanently</div>
+      <div class="status-quote">O recurso foi movido definitivamente para outra URL.</div>
+    </div>
+    <div class="status-card anim-card" style="border-top:3px solid #8a5c00">
+      <span class="status-code" style="color:#8a5c00">401</span>
+      <div class="status-name">Unauthorized</div>
+      <div class="status-quote">Autenticação necessária. O cliente não enviou credenciais válidas.</div>
+    </div>
+    <div class="status-card s404 anim-card">
+      <span class="status-code">404</span>
+      <div class="status-name">Not Found</div>
+      <div class="status-quote">O recurso solicitado não existe no servidor.</div>
+    </div>
+    <div class="status-card anim-card" style="border-top:3px solid var(--purple)">
+      <span class="status-code" style="color:var(--purple)">500</span>
+      <div class="status-name">Internal Server Error</div>
+      <div class="status-quote">Erro interno no servidor. O processamento da requisição falhou.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Regra geral:</strong>
+    <span class="badge badge-green">2xx</span> Sucesso ·
+    <span class="badge badge-blue">3xx</span> Redirecionamento ·
+    <span class="badge badge-amber">4xx</span> Erro do cliente ·
+    <span class="badge badge-coral">5xx</span> Erro do servidor
+  </div>
+</div>
+
+
+<!-- ══ Slide 10: HTML — O que é ══════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">HTML · Fundamentos</div>
+  <h2 class="slide-title">HTML — A Linguagem de Marcação</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:14px;line-height:1.75;color:var(--muted);margin-bottom:14px">
+        Imagine um editor de jornal antigo. Você entrega um texto puro e ele circula partes com marcações na margem: <em>"isso é título"</em>, <em>"isso é parágrafo"</em>. As <strong style="color:var(--text)">tags HTML</strong> são exatamente essas marcações.
+      </p>
+      <div class="tip"><strong>HTML não cria</strong> o conteúdo. Ele diz o que o conteúdo <strong>é</strong>. O navegador usa essa informação para saber como exibir cada elemento.</div>
+      <div class="warn" style="margin-top:10px"><strong>HTML ≠ Programação.</strong> Não tem lógica, loops ou condições. É apenas estrutura e significado semântico.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Texto puro → Texto marcado</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">antes.txt → depois.html</span>
+        </div>
+        <div class="terminal-body" style="font-size:11.5px;line-height:1.8">
+          <div class="cmt">texto puro — sem marcação</div>
+          <div class="out">IFSC – Campus Gaspar</div>
+          <div class="out">Bem-vindo ao curso!</div>
+          <div class="out" style="height:6px"></div>
+          <div class="cmt">mesmo texto — com HTML</div>
+          <div class="out"><span class="hlb">&lt;h1&gt;</span>IFSC – Campus Gaspar<span class="hlb">&lt;/h1&gt;</span></div>
+          <div class="out"><span class="hlb">&lt;p&gt;</span>Bem-vindo ao curso!<span class="hlb">&lt;/p&gt;</span></div>
+        </div>
+      </div>
+      <div class="info"><strong>Exercício "O HTML Humano":</strong> Pegue um papel com texto puro. Circule o título em vermelho e escreva &lt;h1&gt;. Circule os parágrafos e escreva &lt;p&gt;.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 11: Anatomia de uma Tag ════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">HTML · Sintaxe</div>
+  <h2 class="slide-title">Anatomia de uma Tag HTML</h2>
+
+  <div class="tag-anatomy">
+    <div class="tag-group">
+      <span class="tag-part tag-open">&lt;h1&gt;</span>
+      <div class="tag-label">Tag de abertura</div>
+    </div>
+    <div class="tag-group">
+      <span class="tag-part tag-content">Título da Página</span>
+      <div class="tag-label">Conteúdo</div>
+    </div>
+    <div class="tag-group">
+      <span class="tag-part tag-close">&lt;/h1&gt;</span>
+      <div class="tag-label">Tag de fechamento</div>
+    </div>
+  </div>
+
+  <div class="cards cards-3">
+    <div class="card accent-coral anim-card">
+      <h3>Títulos</h3>
+      <div style="font-family:var(--mono);font-size:11.5px;line-height:2.1;color:var(--muted)">
+        <div><span style="color:var(--coral)">&lt;h1&gt;</span> Mais importante</div>
+        <div><span style="color:var(--coral)">&lt;h2&gt;</span> Subtítulo</div>
+        <div><span style="color:var(--coral)">&lt;h3&gt;</span> Seção</div>
+        <div style="color:var(--muted2)">… até &lt;h6&gt;</div>
+      </div>
+    </div>
+    <div class="card accent-blue anim-card">
+      <h3>Texto e Links</h3>
+      <div style="font-family:var(--mono);font-size:11.5px;line-height:2.1;color:var(--muted)">
+        <div><span style="color:var(--blue)">&lt;p&gt;</span> Parágrafo</div>
+        <div><span style="color:var(--blue)">&lt;strong&gt;</span> Negrito</div>
+        <div><span style="color:var(--blue)">&lt;em&gt;</span> Itálico</div>
+        <div><span style="color:var(--blue)">&lt;a&gt;</span> Link</div>
+      </div>
+    </div>
+    <div class="card accent-green anim-card">
+      <h3>Listas e Tabelas</h3>
+      <div style="font-family:var(--mono);font-size:11.5px;line-height:2.1;color:var(--muted)">
+        <div><span style="color:var(--green)">&lt;ul&gt;</span> Lista com pontos</div>
+        <div><span style="color:var(--green)">&lt;ol&gt;</span> Lista numerada</div>
+        <div><span style="color:var(--green)">&lt;li&gt;</span> Item da lista</div>
+        <div><span style="color:var(--green)">&lt;table&gt;</span> Tabela</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn" style="margin-top:10px"><strong>Atributos:</strong> Tags podem ter atributos: <code style="font-size:12px">&lt;a <span style="color:#8a5c00">href</span>="https://google.com"&gt;Google&lt;/a&gt;</code> — o atributo <code>href</code> define o destino do link.</div>
+</div>
+
+
+<!-- ══ Slide 12: Estrutura da Página HTML ════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">HTML · Estrutura Base</div>
+  <h2 class="slide-title">O Esqueleto de toda página HTML</h2>
+
+  <div class="two-col">
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">index.html</span>
+        </div>
+        <div class="terminal-body" style="font-size:11.5px;line-height:2">
+          <div class="out"><span class="hlp">&lt;!DOCTYPE html&gt;</span></div>
+          <div class="out"><span class="hlb">&lt;html</span> <span class="hl">lang</span>=<span class="hlg">"pt-BR"</span><span class="hlb">&gt;</span></div>
+          <div class="out" style="padding-left:18px"><span class="hlb">&lt;head&gt;</span></div>
+          <div class="out" style="padding-left:36px"><span class="hlb">&lt;meta</span> <span class="hl">charset</span>=<span class="hlg">"UTF-8"</span><span class="hlb">&gt;</span></div>
+          <div class="out" style="padding-left:36px"><span class="hlb">&lt;title&gt;</span>Minha Página<span class="hlb">&lt;/title&gt;</span></div>
+          <div class="out" style="padding-left:18px"><span class="hlb">&lt;/head&gt;</span></div>
+          <div class="out" style="padding-left:18px"><span class="hlb">&lt;body&gt;</span></div>
+          <div class="out" style="padding-left:36px"><span class="hlb">&lt;h1&gt;</span>Olá Mundo!<span class="hlb">&lt;/h1&gt;</span></div>
+          <div class="out" style="padding-left:36px"><span class="hlb">&lt;p&gt;</span>Meu primeiro parágrafo.<span class="hlb">&lt;/p&gt;</span></div>
+          <div class="out" style="padding-left:18px"><span class="hlb">&lt;/body&gt;</span></div>
+          <div class="out"><span class="hlb">&lt;/html&gt;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <ul class="steps">
+        <li>
+          <div class="step-num" style="font-size:9px">DTD</div>
+          <div><strong>&lt;!DOCTYPE html&gt;</strong><span>Declara ao navegador que é HTML5. Sempre na primeira linha, sem exceção.</span></div>
+        </li>
+        <li>
+          <div class="step-num">①</div>
+          <div><strong>&lt;html lang="pt-BR"&gt;</strong><span>Raiz do documento. Tudo fica dentro dele. O atributo <code>lang</code> define o idioma da página.</span></div>
+        </li>
+        <li>
+          <div class="step-num">②</div>
+          <div><strong>&lt;head&gt;</strong><span>Informações <em>para o navegador</em>: título, ícone, CSS, charset. Não aparece visualmente.</span></div>
+        </li>
+        <li>
+          <div class="step-num">③</div>
+          <div><strong>&lt;body&gt;</strong><span>O conteúdo visível. Tudo que o usuário vê e interage fica aqui.</span></div>
+        </li>
+      </ul>
+      <div class="warn" style="margin-top:10px"><strong>Regra de ouro:</strong> Toda tag que abre <strong>deve ser fechada</strong> (exceto tags auto-fecháveis como <code>&lt;br&gt;</code> e <code>&lt;img&gt;</code>).</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 13: O DOM ════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">DOM · Document Object Model</div>
+  <h2 class="slide-title">O DOM — Como o navegador lê o HTML</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:13.5px;line-height:1.75;color:var(--muted);margin-bottom:14px">
+        Quando o navegador recebe o HTML, ele o transforma em uma <strong style="color:var(--text)">árvore de objetos</strong> — o <strong style="color:var(--text)">DOM</strong>. É como um organograma da sua página. Cada tag vira um nó da árvore.
+      </p>
+
+      <div class="dom-tree-wrap">
+        <div class="dom-line"><span class="dom-root">document</span></div>
+        <div class="dom-line" style="padding-left:14px">└─ <span class="dom-tag">&lt;html&gt;</span></div>
+        <div class="dom-line" style="padding-left:28px">├─ <span class="dom-tag">&lt;head&gt;</span></div>
+        <div class="dom-line" style="padding-left:42px">│&nbsp;&nbsp;└─ <span class="dom-tag">&lt;title&gt;</span> <span class="dom-text">"Minha Página"</span></div>
+        <div class="dom-line" style="padding-left:28px">└─ <span class="dom-tag">&lt;body&gt;</span></div>
+        <div class="dom-line" style="padding-left:42px">├─ <span class="dom-tag">&lt;h1 </span><span class="dom-attr">id="titulo"</span><span class="dom-tag">&gt;</span></div>
+        <div class="dom-line" style="padding-left:42px">├─ <span class="dom-tag">&lt;p </span><span class="dom-attr">class="intro"</span><span class="dom-tag">&gt;</span></div>
+        <div class="dom-line" style="padding-left:42px">└─ <span class="dom-tag">&lt;ul&gt;</span></div>
+        <div class="dom-line" style="padding-left:56px">├─ <span class="dom-tag">&lt;li&gt;</span> <span class="dom-text">"Item 1"</span></div>
+        <div class="dom-line" style="padding-left:56px">└─ <span class="dom-tag">&lt;li&gt;</span> <span class="dom-text">"Item 2"</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="tip" style="margin-bottom:12px"><strong>Por que o DOM importa?</strong><br>JavaScript usa o DOM para <em>modificar a página</em> sem recarregar. <code>document.getElementById('titulo')</code> pega aquele nó e você pode mudar seu texto, estilo ou posição.</div>
+
+      <div class="section-label">Ver o DOM ao vivo</div>
+      <ul class="steps">
+        <li>
+          <div class="step-num" style="font-size:9px">F12</div>
+          <div><strong>Abra o DevTools</strong><span>Clique com o botão direito em qualquer elemento → "Inspecionar".</span></div>
+        </li>
+        <li>
+          <div class="step-num" style="font-size:10px">⚙</div>
+          <div><strong>Aba Elements</strong><span>Você vê toda a árvore DOM em tempo real e pode editar o HTML direto.</span></div>
+        </li>
+        <li>
+          <div class="step-num" style="font-size:10px">🌐</div>
+          <div><strong>HTML Tree Generator</strong><span><a href="https://bioub.github.io/dom-visualizer/" target="_blank" rel="noopener">bioub.github.io/dom-visualizer</a> — visualiza o DOM graficamente.</span></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 14: O Trio HTML + CSS + JS ═════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Síntese · As Três Linguagens da Web</div>
+  <h2 class="slide-title">O Trio Fundamental</h2>
+  <p class="subtitle">Cada uma tem uma responsabilidade bem definida. Juntas, constroem toda experiência web que você conhece.</p>
+
+  <div class="trio-grid">
+    <div class="trio-card trio-html anim-card">
+      <span class="trio-emoji">🦴</span>
+      <div class="trio-lang">HTML</div>
+      <div class="trio-role">Estrutura · O Esqueleto</div>
+      <div class="trio-desc">Define o que cada elemento <em>é</em>: título, parágrafo, lista, link, formulário, imagem...</div>
+    </div>
+    <div class="trio-card trio-css anim-card">
+      <span class="trio-emoji">👗</span>
+      <div class="trio-lang">CSS</div>
+      <div class="trio-role">Aparência · A Roupa</div>
+      <div class="trio-desc">Define como cada elemento <em>parece</em>: cor, tamanho, fonte, espaçamento, layout, animação...</div>
+    </div>
+    <div class="trio-card trio-js anim-card">
+      <span class="trio-emoji">💪</span>
+      <div class="trio-lang">JavaScript</div>
+      <div class="trio-role">Comportamento · Os Músculos</div>
+      <div class="trio-desc">Define o que cada elemento <em>faz</em>: cliques, formulários, requisições, manipulação do DOM...</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>HTTP</strong> é o sistema circulatório (transporta informação) ·
+    <strong>Servidor</strong> é o cérebro/memória (onde a informação reside) ·
+    <strong>Navegador</strong> é o músculo que executa tudo
+  </div>
+</div>
+
+
+<!-- ══ Slide 15: DevTools ════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Ferramentas · DevTools</div>
+  <h2 class="slide-title">DevTools — Seu Raio-X do Navegador</h2>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:13.5px;line-height:1.75;color:var(--muted);margin-bottom:14px">
+        Pressione <strong style="color:var(--text)">F12</strong> (ou <kbd style="background:var(--bg3);border:1px solid var(--border);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:11px">Ctrl+Shift+I</kbd>) em qualquer site. É a sua janela para o interior da web.
+      </p>
+      <ul class="steps">
+        <li>
+          <div class="step-num" style="font-size:9px">EL</div>
+          <div><strong>Elements (Elementos)</strong><span>Veja e edite o DOM ao vivo. Clique num elemento para inspecioná-lo.</span></div>
+        </li>
+        <li>
+          <div class="step-num" style="font-size:9px">NT</div>
+          <div><strong>Network (Rede)</strong><span>Todas as requisições HTTP: tempo, status, tamanho. O HTML chega primeiro.</span></div>
+        </li>
+        <li>
+          <div class="step-num" style="font-size:9px">CS</div>
+          <div><strong>Console</strong><span>Execute JavaScript direto no navegador. Veja erros e mensagens de log.</span></div>
+        </li>
+        <li>
+          <div class="step-num" style="font-size:9px">SC</div>
+          <div><strong>Sources (Fontes)</strong><span>Veja e depure todos os arquivos carregados: HTML, CSS, JS, imagens.</span></div>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-a"></div><div class="dot dot-g"></div>
+          <span class="path">DevTools · Aba Network</span>
+        </div>
+        <div class="terminal-body" style="font-size:11px;line-height:1.8">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4px;color:#3d4460;font-size:10px;padding-bottom:4px;border-bottom:1px solid #2d3245">
+            <span>Nome</span><span>Status</span><span>Tipo</span><span>Tam.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4px;margin-top:4px">
+            <span class="hlb">index.html</span><span class="hlg">200</span><span class="out">document</span><span class="out">12 KB</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4px">
+            <span class="hlb">style.css</span><span class="hlg">200</span><span class="out">stylesheet</span><span class="out">8 KB</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4px">
+            <span class="hlb">app.js</span><span class="hlg">200</span><span class="out">script</span><span class="out">4 KB</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4px">
+            <span class="hlb">logo.png</span><span class="hlg">200</span><span class="out">image</span><span class="out">32 KB</span>
+          </div>
+          <div class="cmt" style="margin-top:6px">HTML chega primeiro, recursos depois</div>
+        </div>
+      </div>
+      <div class="tip"><strong>Tente agora:</strong> Abra o Google, vá em Network, marque "Disable cache" e recarregue. Veja cada arquivo chegando separado!</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 16: Exercício — O Algoritmo do Desenho ═════════ -->
+<div class="slide">
+  <div class="exercise-wrap">
+    <div class="exercise-stripe"></div>
+    <div class="slide-tag" style="color:var(--accent);margin-top:4px">Exercício · Trabalho em Dupla</div>
+    <h2 class="slide-title">O Algoritmo do Desenho</h2>
+    <p class="subtitle" style="margin-bottom:16px">Sem olhar para a tela do colega, você consegue "codar" uma página apenas ouvindo instruções?</p>
+
+    <div class="cards cards-2" style="gap:12px;margin-bottom:14px">
+      <div class="ex-card">
+        <h4>📋 Aluno A — O Narrador</h4>
+        <p>Recebe uma imagem impressa de uma página simples (título, imagem central e dois parágrafos).</p>
+        <ul>
+          <li>❌ Errado: <em>"Coloca um título grande"</em></li>
+          <li>✅ Certo: <em>"Abre a tag h1, escreve 'Título', fecha a tag h1"</em></li>
+        </ul>
+      </div>
+      <div class="ex-card">
+        <h4>💻 Aluno B — O Navegador</h4>
+        <p>Está com o editor de código aberto, mas <strong>não pode ver</strong> a imagem do colega.</p>
+        <ul>
+          <li>Só pode codificar o que for narrado</li>
+          <li>Segue as instruções à risca — sem interpretar</li>
+          <li>No final: abre no navegador e compara</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip"><strong>Objetivo:</strong> Entender que HTML é uma linguagem precisa. Palavras ambíguas geram resultados errados. O navegador não "adivinha" a intenção — ele obedece ao código.</div>
+  </div>
+</div>
+
+
+<!-- ══ Slide 17: Síntese + Próximos Passos ═══════════════════ -->
+<div class="slide">
+  <div class="slide-tag">Síntese · O ciclo URL → Página</div>
+  <h2 class="slide-title">Tudo conectado</h2>
+
+  <div class="cards cards-2" style="gap:12px;margin-bottom:14px">
+    <div class="card accent-blue anim-card">
+      <div class="section-label" style="margin-top:0">Ciclo completo: URL → Página</div>
+      <div style="font-family:var(--mono);font-size:12px;line-height:2.3;color:var(--muted)">
+        <div>1. <span style="color:var(--blue)">URL</span> digitada no navegador</div>
+        <div>2. <span style="color:var(--blue)">DNS</span> resolve o nome → IP</div>
+        <div>3. <span style="color:var(--blue)">HTTP GET</span> enviado ao servidor</div>
+        <div>4. Servidor responde <span style="color:var(--green)">200 OK + HTML</span></div>
+        <div>5. Navegador constrói o <span style="color:var(--blue)">DOM</span></div>
+        <div>6. <span style="color:var(--coral)">Página</span> renderizada na tela</div>
+      </div>
+    </div>
+    <div class="card accent-green anim-card">
+      <div class="section-label" style="margin-top:0">O que aprendemos</div>
+      <div style="font-size:13px;line-height:2.1;color:var(--muted)">
+        <div>🌆 <strong style="color:var(--text)">Internet</strong> = infraestrutura (cabos, IPs)</div>
+        <div>🏪 <strong style="color:var(--text)">Web</strong> = serviço HTTP sobre a internet</div>
+        <div>↔ <strong style="color:var(--text)">HTTP</strong> = protocolo de requisição/resposta</div>
+        <div>📋 <strong style="color:var(--text)">DNS</strong> = nomes → IPs</div>
+        <div>📄 <strong style="color:var(--text)">HTML</strong> = estrutura semântica</div>
+        <div>🌳 <strong style="color:var(--text)">DOM</strong> = árvore viva do HTML</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards cards-2" style="gap:12px">
+    <div class="card accent-amber anim-card">
+      <div class="section-label" style="margin-top:0">Próxima aula</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">
+        👗 <strong style="color:var(--text)">CSS</strong> — dar aparência ao esqueleto<br>
+        📐 Box model, seletores e flexbox<br>
+        💪 Primeiros passos com <strong style="color:var(--text)">JavaScript</strong>
+      </div>
+    </div>
+    <div class="card accent-green anim-card">
+      <div class="section-label" style="margin-top:0">Recursos essenciais</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.9">
+        🌐 <a href="https://developer.mozilla.org" target="_blank" rel="noopener">MDN Web Docs</a> — referência completa<br>
+        🗺 <a href="https://submarinecablemap.com" target="_blank" rel="noopener">Submarine Cable Map</a><br>
+        🌳 <a href="https://bioub.github.io/dom-visualizer/" target="_blank" rel="noopener">DOM Visualizer</a><br>
+        ✅ <a href="https://validator.w3.org" target="_blank" rel="noopener">W3C HTML Validator</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /stage -->
+
+<div class="nav">
+  <button class="nav-btn js-prev">← Anterior</button>
+  <div class="nav-dots" data-dots></div>
+  <button class="nav-btn js-next">Próximo →</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIGURAÇÃO
+   ═══════════════════════════════════════════ */
+const CONFIG = {
+  acronym:     'IFSC',
+  institution: 'Instituto Federal de Santa Catarina',
+  campus:      'Campus Gaspar',
+  workshop:    'WEB · AULA 1',
+  headerLabel: 'web@fundamentos',
+};
+
+/* ═══════════════════════════════════════════
+   TOPBAR
+   ═══════════════════════════════════════════ */
+document.getElementById('topbar-inner').innerHTML = `
+  <div class="ifsc-brand">
+    <div class="ifsc-logo-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36">
+        <rect width="36" height="36" rx="5" fill="rgba(255,255,255,0.18)"/>
+        <text x="18" y="25" text-anchor="middle"
+          font-family="'Segoe UI',system-ui,sans-serif"
+          font-size="13" font-weight="900" fill="#fff">${CONFIG.acronym}</text>
+      </svg>
+    </div>
+    <div class="ifsc-text">
+      <div class="inst">${CONFIG.institution}</div>
+      <div class="campus">${CONFIG.campus}</div>
+    </div>
+  </div>
+  <div class="workshop-label">${CONFIG.workshop}</div>
+`;
+document.getElementById('header-label').textContent = CONFIG.headerLabel;
+
+/* ═══════════════════════════════════════════
+   NAVEGAÇÃO BASE
+   ═══════════════════════════════════════════ */
+const slides   = Array.from(document.querySelectorAll('.slide'));
+const TOTAL    = slides.length;
+let cur        = 0;
+
+const dotsEls  = document.querySelectorAll('[data-dots]');
+const prevBtns = document.querySelectorAll('.js-prev');
+const nextBtns = document.querySelectorAll('.js-next');
+
+dotsEls.forEach(dotsEl => {
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot-nav' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+});
+
+function triggerSlideAnims(slideEl) {
+  /* Stagger para .anim-card */
+  slideEl.querySelectorAll('.anim-card').forEach((el, i) => {
+    el.style.animationDelay = `${i * 0.1 + 0.05}s`;
+  });
+  /* Stagger para nós do DOM tree */
+  slideEl.querySelectorAll('.dom-line').forEach((el, i) => {
+    el.style.animationDelay = `${i * 0.07 + 0.08}s`;
+  });
+}
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEls.forEach(el => el.children[cur].classList.remove('active'));
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  slides[cur].classList.add('active');
+  dotsEls.forEach(el => el.children[cur].classList.add('active'));
+  document.getElementById('pbar').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + TOTAL;
+  prevBtns.forEach(btn => btn.disabled = cur === 0);
+  nextBtns.forEach(btn => btn.disabled = cur === TOTAL - 1);
+  window.scrollTo(0, 0);
+  triggerSlideAnims(slides[cur]);
+  /* Resetar HTTP dinner ao entrar no slide */
+  if (cur === httpSlideIdx) resetHttpDinner();
+}
+
+/* Init */
+slides[0].classList.add('active');
+triggerSlideAnims(slides[0]);
+document.getElementById('pbar').style.width = (1 / TOTAL * 100) + '%';
+document.getElementById('counter').textContent = '1 / ' + TOTAL;
+prevBtns.forEach(btn => btn.disabled = true);
+
+function navigate(dir) { goTo(cur + dir); }
+prevBtns.forEach(btn => btn.addEventListener('click', () => navigate(-1)));
+nextBtns.forEach(btn => btn.addEventListener('click', () => navigate(1)));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+});
+
+/* ═══════════════════════════════════════════
+   HTTP DINNER — interativo
+   ═══════════════════════════════════════════ */
+const httpSlideIdx   = slides.findIndex(s => s.dataset.interactive === 'http-dinner');
+const httpSteps      = Array.from(document.querySelectorAll('.http-reveal-step'));
+const httpNextBtn    = document.querySelector('.js-http-next');
+const httpPrevBtn    = document.querySelector('.js-http-prev');
+const httpCounter    = document.querySelector('.http-step-counter');
+
+/* Quem está em destaque em cada passo (0-indexed) */
+const actorMap = ['ap-client', 'ap-dns', 'ap-server', 'ap-server', 'ap-client'];
+
+let httpCur = -1;
+
+function updateHttpDinner(n) {
+  httpCur = n;
+  httpSteps.forEach((s, i) => s.classList.toggle('shown', i <= n));
+
+  /* Highlight do ator ativo */
+  ['ap-client', 'ap-dns', 'ap-server'].forEach(id => {
+    document.getElementById(id)?.classList.remove('lit');
+  });
+  if (n >= 0 && actorMap[n]) {
+    document.getElementById(actorMap[n])?.classList.add('lit');
+  } else {
+    document.getElementById('ap-client')?.classList.add('lit');
+  }
+
+  /* Botões e contador */
+  if (httpNextBtn) httpNextBtn.disabled = n >= httpSteps.length - 1;
+  if (httpPrevBtn) httpPrevBtn.disabled = n < 0;
+  if (httpCounter) httpCounter.textContent = `Passo ${Math.max(0, n + 1)} de ${httpSteps.length}`;
+}
+
+function resetHttpDinner() { updateHttpDinner(-1); }
+
+if (httpNextBtn) httpNextBtn.addEventListener('click', () => {
+  if (httpCur < httpSteps.length - 1) updateHttpDinner(httpCur + 1);
+});
+if (httpPrevBtn) httpPrevBtn.addEventListener('click', () => {
+  updateHttpDinner(httpCur - 1);
+});
+</script>
+</body>
+</html>
