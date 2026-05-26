@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="aula3.css"> 
+    <title>CSS</title>
+    <style>
+        *{
+             padding: 0px;
+             margin: 0px;
+        } 
+        h1{color:white}
+        html{
+             border: 1px solid red;
+        }
+        body{
+             border: 1px solid greenyellow;
+             height: 100vh;
+             background-image:url("./imgs/cat.png");
+             background-size: contain;
+             background-attachment: fixed;
+        }
+
+
+    </style>
+</head>
+<body>
+    <H1 style="color:fuchsia">CSS</H1>
+    <p>Linguagem de estilização e definição de comportamento sobre o HTML.</p>
+    <p>Pode incorporado em 3 locais diferentes</p>
+    
+    <dl>
+        <dt>CSS Externo</dt>
+        <dd>CSS externo é definido utilizando a tag link no inicio do documento HTML na seção de HEAD
+            <code>
+                &lt link rel="stylesheet" href="style.css" &gt
+            </code>
+        </dd>
+        <dt>CSS incorporado tag style</dt>
+        <dd>O css incorporado é definido comumente seção HEAD, podenso ser definido também em outros locais </dd>
+
+        <dt>CSS inline</dt>
+        <dd>É definido por meio da propriedade  style  no proprio elemento HTML no qual ele será utilizado</dd>
+    </dl>
+    <hr>
+    <h1>Model Box (Modelo Em Caixa)</h1>
+    <p>O HTML e CSS possuem um conceito central que é o modelo em caixa, um elemento é definido dentro do outro tendo uma estrutura comum a todos elementos HTML.</p>
+    <img src="./imgs/modelbox.png" alt="" style="width: 200px;">
+
+    <span style="display: block;
+                 border-top-width: 5px;
+                 border-top-color:black;
+                 border-top-style: dotted;
+                 border-right-width: 5px;
+                 border-right-color:black;
+                 border-right-style: double;
+                 border-bottom-width: 5px;
+                 border-bottom-color:black;
+                 border-bottom-style: dashed;
+                 border-left-width: 5px;
+                 border-left-color:black;
+                 border-left-style: groove;
+
+                 padding: 20px 15px 10px 50px;
+
+                 ">TEXTO EXEMPLO PADDING</span>
+    <span  style="
+    display: block;
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: gold; 
+    border: 10px solid rgba(50, 50, 50,0.5);
+    background-image: url('./imgs/cat.png');
+    background-position: 0px 0px;
+    background-size: 100px ;
+    background-repeat: no-repeat;
+
+    outline: 5px solid magenta;
+    outline-offset: 10px;
+
+    "
+    
+    >TEXTO EXEMPLO CAMADAS CONTENT</span>
+
+     <span  style="
+    display: block;
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: gold; 
+    border: 10px solid rgba(50, 50, 50,0.5);
+    background-image: url('./imgs/cat.png');
+    background-position: 0px 0px;
+    background-size: 100px ;
+    background-repeat: no-repeat;
+
+    outline: 5px solid rgb(67, 49, 67);
+    outline-offset: 10px;
+
+    "
+    
+    >TEXTO EXEMPLO CAMADAS CONTENT</span>
+    
+</body>
+</html>
