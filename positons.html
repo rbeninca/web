@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box-1{
+            position: relative;
+            top:100px;
+            border: 2px dotted purple;
+        }
+        *{border: 10px solid red;}
+        .box{ display: inline-block;
+            height: 100px;
+            width: 100px;
+            border: 1px solid black;
+        }
+        
+        #box-2{/* posiciona em relação ao viewPort */
+            position: fixed;
+            top:100px;
+        }
+        #box-3{/*posiciona em relação primeiro ancestral não static*/
+            position: absolute;
+            top:50px;
+            left: 50px;
+        }
+        .container{  border: 1px solid black;
+            position: relative;}
+    </style>
+</head>
+<body>
+    <div>
+    <h1>Positons</h1>    
+    <p style="border: 10px solid cyan;">Positions permitem posicionar os elementos HTML, mudado a referencia utilizada para posicionamento, e então defininido a nova posição por meio das propriedades top,left,right,botoom</p>
+    <p>O position natural do HTML é static</p>
+    <p>O position relative posiciona o elemento em a posição static elemento</p>
+</div>
+<span>span1</span><span>span2</span><span>span3</span><span>span4</span>
+<div class="container">
+    <div class="box" id="box-1">box-1</div>
+    <div class="box" id="box-2">box-2</div>
+    <div class="box" id="box-3">box-3</div>
+    <div class="box" id="box-4">box-4</div>
+    <div class="box" id="box-5">box-5</div>
+</div>
+</body>
+</html>

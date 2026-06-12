@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{
+            height: 10px;
+        }
+        /** 
+            seletor{
+                propriedade:valor;
+                ....
+            }
+        
+        **/
+        html{
+            height: 200vh;
+            position: relative;
+        }
+
+        #container{
+            border:10px solid black;
+            position: fixed;
+            top: 50%;      
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .box {
+            border:1px solid black;
+            width: 100px;
+            height: 100px;
+            background-color: magenta;
+            line-height: 100px;
+            text-align: center;
+            }
+        #box1.box{background-color: peru;}    
+        #box1{
+            position: absolute;
+            top:0px;
+            left:0px;
+            background-color: greenyellow;
+        }
+
+        #box2{
+            position: absolute;
+            top:0px;
+            right:0px;
+            background-color: yellow;
+        }
+        #box3{
+            position: absolute;
+            background-color: blue;
+            right: 0px;
+            bottom: 0px;
+        }
+        #box4{
+            position: absolute;
+            bottom:0px;
+            left:0px;
+            background-color: red;
+        }
+        #box5{
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            background-color: gray;
+            
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Positions</h1>
+    </div>
+    <div id="container">
+        <div id="box1" class="box">box1</div>
+        <div id="box2" class="box">box2</div>
+        <div id="box3" class="box">box3</div>
+        <div id="box4" class="box">box4</div>
+        <div id="box5" class="box" style="background-color: white;">box5</div>
+    </div>
+    <div class="box">box6</div>
+    
+</body>
+</html>
